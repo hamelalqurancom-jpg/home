@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول السماسرة - عقارات مسير</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-house-chimney"></i>
+                عقارات مسير
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">البوابة الرئيسية</a>
+                <a href="properties.html">العقارات</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Auth Container -->
+    <main class="auth-page">
+        <div class="auth-container">
+            <!-- Login Form -->
+            <div class="auth-form-wrapper active" id="loginForm">
+                <div class="auth-header">
+                    <h2>تسجيل الدخول للسماسرة</h2>
+                    <p>أدخل بياناتك للوصول إلى لوحة التحكم الخاصة بك</p>
+                </div>
+                <form id="formLogin">
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="tel" id="loginPhone" placeholder="مثال: 01012345678" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary w-100" id="btnLogin">
+                        <i class="fa-solid fa-right-to-bracket"></i> تسجيل الدخول
+                    </button>
+                    <div class="form-footer">
+                        <p>ليس لديك حساب؟ <a href="#" id="showSignup">إنشاء حساب جديد</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="auth-form-wrapper" id="signupForm" style="display:none;">
+                <div class="auth-header">
+                    <h2>إنشاء حساب سمسار</h2>
+                    <p>سجل الآن لعرض عقاراتك والتواصل مع العملاء</p>
+                </div>
+                <form id="formSignup">
+                    <div class="form-group">
+                        <label>الاسم الكامل</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="signupName" placeholder="الاسم ثلاثي" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="tel" id="signupPhone" placeholder="01XXXXXXXXX" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور</label>
+                        <div class="input-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="signupPassword" placeholder="••••••••" required minlength="6">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary w-100" id="btnSignup">
+                        <i class="fa-solid fa-user-plus"></i> إنشاء الحساب
+                    </button>
+                    <div class="form-footer">
+                        <p>لديك حساب بالفعل؟ <a href="#" id="showLogin">تسجيل الدخول</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <div id="authAlert" class="alert" style="display: none;"></div>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+
+    <!-- Custom JS -->
+    <script src="firebase-config.js"></script>
+
+    <!-- Custom JS -->
+    <script src="auth.js"></script>
+</body>
+
+</html>

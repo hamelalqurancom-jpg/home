@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم السمسار - عقارات مسير</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+        @media (max-width: 768px) {
+            .dashboard-container { padding: 20px; }
+            .dashboard-header { flex-direction: column; text-align: center; gap: 10px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        .dashboard-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid var(--light); padding-bottom: 20px;
+        }
+        .dashboard-header h2 { color: var(--primary); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        textarea { width: 100%; padding: 15px; border: 1px solid var(--border); border-radius: 8px; resize: vertical; font-family: inherit; }
+        .file-upload-box { border: 2px dashed var(--primary); padding: 30px; text-align: center; border-radius: 8px; background: var(--light); cursor: pointer; margin-bottom: 20px; }
+        .file-upload-box input { display: none; }
+        .file-upload-box i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+        .progress-bar { width: 100%; background: var(--light); border-radius: 4px; height: 10px; margin-bottom: 20px; display: none; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: width 0.3s; }
+        .thumbnails-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .thumbnail-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid var(--border); }
+
+        /* Profile Styles */
+        .profile-header {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+        .cover-photo {
+            height: 200px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+        }
+        .profile-info {
+            padding: 20px;
+            display: flex;
+            align-items: flex-end;
+            margin-top: -60px;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--primary);
+            border: 4px solid var(--white);
+            box-shadow: var(--shadow);
+            margin-left: 20px;
+            z-index: 2;
+        }
+        .profile-details h2 { margin: 0; color: var(--dark); font-size: 1.8rem; }
+        .profile-details p { color: #64748b; margin-top: 5px; font-weight: bold; }
+        
+        .profile-tabs {
+            display: flex;
+            background: var(--white);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        .profile-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            color: #64748b;
+            transition: 0.3s;
+        }
+        .profile-tab.active { background: var(--primary); color: var(--white); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .my-properties-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .prop-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: 0.3s;
+        }
+        .prop-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .prop-card img { width: 100%; height: 200px; object-fit: cover; }
+        .prop-card-body { padding: 20px; }
+        .prop-card-body h3 { font-size: 1.2rem; color: var(--dark); margin-bottom: 10px; }
+        .prop-card-price { color: var(--primary); font-size: 1.3rem; font-weight: bold; margin-bottom: 10px; }
+        .prop-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid var(--light);
+            padding-top: 15px;
+        }
+        .btn-delete {
+            background: #fee2e2; color: #ef4444; border: none; padding: 10px 15px;
+            border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;
+        }
+        .btn-delete:hover { background: #ef4444; color: #fff; }
+</head>
+
+<body class="bg-light">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-house-chimney"></i> عقارات مسير
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">البوابة الرئيسية</a>
+                <a href="properties.html">العقارات</a>
+                <a href="#" class="btn-primary-outline" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i>
+                    تسجيل الخروج</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="cover-photo"></div>
+            <div class="profile-info">
+                <div class="profile-avatar"><i class="fa-solid fa-user-tie"></i></div>
+                <div class="profile-details">
+                    <h2 id="brokerDisplayName">جاري التحميل...</h2>
+                    <p><i class="fa-solid fa-building"></i> إجمالي العقارات التي أضفتها: <span id="propCount" style="color: var(--primary); font-size: 1.1rem;">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="profile-tabs">
+            <div class="profile-tab active" onclick="switchTab(event, 'myProps')"><i class="fa-solid fa-list"></i> عقاراتي</div>
+            <div class="profile-tab" onclick="switchTab(event, 'addProp')"><i class="fa-solid fa-plus"></i> إضافة عقار جديد</div>
+        </div>
+
+        <!-- My Properties Tab -->
+        <div id="tab-myProps" class="tab-content active">
+            <div class="my-properties-grid" id="myPropertiesList">
+                <div style="text-align:center; padding: 40px; grid-column: 1 / -1;">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i>
+                    <p>جاري تحميل عقاراتك...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Property Tab -->
+        <div id="tab-addProp" class="tab-content">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h2><i class="fa-solid fa-plus-circle"></i> إضافة عقار جديد</h2>
+                </div>
+
+                <form id="addPropertyForm">
+                <div class="form-group">
+                    <label>عنوان العقار</label>
+                    <input type="text" id="propTitle" class="w-100"
+                        style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;" required
+                        placeholder="مثال: فيلا للبيع تشطيب سوبر لوكس">
+                </div>
+
+                <div class="form-group">
+                    <label>اسم السمسار أو الشركة</label>
+                    <input type="text" id="brokerName" class="w-100"
+                        style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;" required
+                        placeholder="مثال: شركة مسير للعقارات">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نوع العقار</label>
+                        <select id="propType" class="w-100"
+                            style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                            <option value="apartment">شقة</option>
+                            <option value="house">منزل</option>
+                            <option value="villa">فيلا</option>
+                            <option value="land">أرض</option>
+                            <option value="shop">محل تجاري</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المنطقة</label>
+                        <select id="propArea" class="w-100"
+                            style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;">
+                            <option value="center">وسط البلد</option>
+                            <option value="north">شمال مسير</option>
+                            <option value="south">جنوب مسير</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>السعر (بالجنيه)</label>
+                        <input type="number" id="propPrice" class="w-100"
+                            style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;" required>
+                    </div>
+                    <div class="form-group">
+                        <label>المساحة (بالمتر المربع)</label>
+                        <input type="number" id="propSize" class="w-100"
+                            style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;" required placeholder="مثال: 120">
+                    </div>
+                </div>
+
+                <div class="form-group" id="floorsContainer" style="display: none; margin-top: 20px;">
+                    <label>عدد الطوابق (للمنازل والفلل)</label>
+                    <input type="number" id="propFloors" class="w-100"
+                        style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;" placeholder="مثال: 3">
+                </div>
+
+                <div class="form-group">
+                    <label>رقم هاتف التواصل</label>
+                    <input type="tel" id="propPhone" class="w-100"
+                        style="padding: 12px; border: 1px solid var(--border); border-radius: 8px;" required placeholder="مثال: 01012345678">
+                </div>
+
+                <div class="form-group">
+                    <label>وصف العقار</label>
+                    <textarea id="propDesc" rows="4" required placeholder="اكتب تفاصيل العقار بدقة..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>صور العقار (يمكنك اختيار أكثر من صورة)</label>
+                    <div class="file-upload-box" onclick="document.getElementById('propImage').click()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p id="fileName">اضغط هنا لاختيار الصور</p>
+                        <input type="file" id="propImage" accept="image/*" multiple>
+                    </div>
+                    <div class="thumbnails-container" id="thumbnailsContainer"></div>
+                </div>
+
+                <div class="progress-bar" id="uploadProgress">
+                    <div class="progress-fill" id="uploadFill"></div>
+                </div>
+
+                <button type="submit" class="btn-primary w-100" id="btnSubmit">
+                    <i class="fa-solid fa-paper-plane"></i> نشر العقار
+                </button>
+                <div id="dashAlert" class="alert" style="display:none;"></div>
+            </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+
+    <!-- Custom JS -->
+    <script src="firebase-config.js"></script>
+    <script>
+        let currentUserId = null;
+
+        // Ensure user is logged in
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                // Fetch broker profile info
+                try {
+                    const doc = await db.collection('brokers').doc(user.uid).get();
+                    if (doc.exists) {
+                        document.getElementById('brokerDisplayName').textContent = doc.data().name;
+                        // Auto-fill broker info in form
+                        document.getElementById('brokerName').value = doc.data().name;
+                        document.getElementById('brokerName').readOnly = true; // prevent changing their own name
+                        document.getElementById('propPhone').value = doc.data().phone;
+                    } else {
+                        document.getElementById('brokerDisplayName').textContent = "السمسار / المالك";
+                    }
+                } catch(e) { console.log(e); }
+                
+                loadMyProperties(user.uid);
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        async function loadMyProperties(uid) {
+            const list = document.getElementById('myPropertiesList');
+            db.collection('properties').where('brokerId', '==', uid).onSnapshot(snapshot => {
+                list.innerHTML = '';
+                document.getElementById('propCount').textContent = snapshot.size;
+                
+                if (snapshot.empty) {
+                    list.innerHTML = '<div style="text-align:center; padding: 40px; grid-column: 1 / -1;"><i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i><p>لم تقم بإضافة أي عقارات بعد.</p></div>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'prop-card';
+                    card.innerHTML = `
+                        <img src="${data.imageUrl}" alt="${data.title}">
+                        <div class="prop-card-body">
+                            <h3>${data.title}</h3>
+                            <div class="prop-card-price">${data.price.toLocaleString()} ج.م</div>
+                            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 5px;"><i class="fa-solid fa-location-dot"></i> ${data.area}</p>
+                            <p style="color: #64748b; font-size: 0.9rem;"><i class="fa-solid fa-ruler-combined"></i> ${data.size} م²</p>
+                            
+                            <div class="prop-card-actions">
+                                <button onclick="deleteMyProperty('${doc.id}')" class="btn-delete"><i class="fa-solid fa-trash"></i> حذف العقار</button>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            });
+        }
+
+        async function deleteMyProperty(propId) {
+            if (confirm("هل أنت متأكد من حذف هذا العقار نهائياً؟")) {
+                try {
+                    // Log the deletion action for the Master Admin
+                    await db.collection('logs').add({
+                        action: 'delete_property',
+                        brokerId: currentUserId,
+                        brokerName: document.getElementById('brokerName').value,
+                        propertyId: propId,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Proceed with deletion
+                    await db.collection('properties').doc(propId).delete();
+                } catch(e) {
+                    alert("عذراً، حدث خطأ أو ليس لديك صلاحية الحذف.");
+                }
+            }
+        }
+        document.getElementById('propImage').addEventListener('change', function (e) {
+            const files = e.target.files;
+            const container = document.getElementById('thumbnailsContainer');
+            const fileNameDisplay = document.getElementById('fileName');
+            container.innerHTML = '';
+            
+            if (files.length > 0) {
+                fileNameDisplay.textContent = `تم اختيار ${files.length} صورة/صور`;
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'thumbnail-preview';
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            } else {
+                fileNameDisplay.textContent = "اضغط هنا لاختيار الصور";
+            }
+        });
+
+        document.getElementById('propType').addEventListener('change', function(e) {
+            const floorsContainer = document.getElementById('floorsContainer');
+            if (e.target.value === 'house' || e.target.value === 'villa') {
+                floorsContainer.style.display = 'block';
+            } else {
+                floorsContainer.style.display = 'none';
+            }
+        });
+
+        document.getElementById('addPropertyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            const alertBox = document.getElementById('dashAlert');
+            const files = document.getElementById('propImage').files;
+
+            alertBox.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع والنشر...';
+
+            try {
+                // Check if Firebase is actually configured
+                if (typeof storage !== 'undefined' && storage.app.options.apiKey !== 'YOUR_API_KEY') {
+                    
+                    let downloadURLs = [];
+                    if (files.length > 0) {
+                        document.getElementById('uploadProgress').style.display = 'block';
+                        document.getElementById('uploadFill').style.width = '30%';
+
+                        // Upload Multiple Images to Firebase Storage
+                        const uploadPromises = Array.from(files).map(async (file) => {
+                            const storageRef = storage.ref('properties/' + Date.now() + '_' + file.name);
+                            const snapshot = await storageRef.put(file);
+                            return await snapshot.ref.getDownloadURL();
+                        });
+
+                        downloadURLs = await Promise.all(uploadPromises);
+                        document.getElementById('uploadFill').style.width = '80%';
+                    }
+
+                    // Save property data to Firestore
+                    await db.collection('properties').add({
+                        title: document.getElementById('propTitle').value,
+                        brokerName: document.getElementById('brokerName').value,
+                        type: document.getElementById('propType').value,
+                        area: document.getElementById('propArea').value,
+                        price: parseInt(document.getElementById('propPrice').value),
+                        size: parseInt(document.getElementById('propSize').value),
+                        floors: document.getElementById('propFloors').value ? parseInt(document.getElementById('propFloors').value) : 0,
+                        brokerPhone: document.getElementById('propPhone').value,
+                        brokerWhatsApp: "2" + document.getElementById('propPhone').value, // Assuming Egypt code
+                        description: document.getElementById('propDesc').value,
+                        imageUrl: downloadURLs.length > 0 ? downloadURLs[0] : 'https://placehold.co/600x400?text=بدون+صورة', // primary image
+                        imageUrls: downloadURLs, // all images
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        brokerId: auth.currentUser ? auth.currentUser.uid : 'anonymous'
+                    });
+
+                    document.getElementById('uploadFill').style.width = '100%';
+                    finishUpload();
+
+                } else {
+                    // Mock behavior if Firebase isn't configured
+                    document.getElementById('uploadProgress').style.display = 'block';
+                    document.getElementById('uploadFill').style.width = '100%';
+                    await new Promise(r => setTimeout(r, 1500));
+                    finishUpload();
+                }
+
+                function finishUpload() {
+                    alertBox.className = 'alert alert-success';
+                    alertBox.textContent = 'تم نشر العقار بنجاح!';
+                    alertBox.style.display = 'block';
+                    document.getElementById('addPropertyForm').reset();
+                    document.getElementById('fileName').textContent = "اضغط هنا لاختيار الصور";
+                    document.getElementById('thumbnailsContainer').innerHTML = '';
+                    document.getElementById('uploadProgress').style.display = 'none';
+                    document.getElementById('uploadFill').style.width = '0%';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-plus"></i> نشر العقار';
+                }
+
+            } catch (error) {
+                console.error(error);
+                alertBox.className = 'alert alert-error';
+                alertBox.textContent = 'حدث خطأ أثناء رفع العقار، تأكد من الاتصال. ' + error.message;
+                alertBox.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-plus"></i> نشر العقار';
+            }
+        });
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof auth !== 'undefined' && auth.app.options.apiKey !== 'YOUR_API_KEY') {
+                auth.signOut().then(() => window.location.href = 'index.html');
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

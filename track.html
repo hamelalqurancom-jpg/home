@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاستعلام عن استشارة - عقارات مسير</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .track-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #475569;
+            width: 150px;
+            display: inline-block;
+        }
+
+        .detail-value {
+            color: #0f172a;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-house-chimney"></i> عقارات مسير
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">البوابة الرئيسية</a>
+                <a href="properties.html">تصفح العقارات</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="track-container">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: var(--primary); font-size: 1.8rem;"><i class="fa-solid fa-magnifying-glass"></i>
+                    الاستعلام عن حالة استشارة</h2>
+                <p style="color: #64748b; margin-top: 10px;">أدخل كود التتبع الخاص باستشارتك لمعرفة الرد والبيانات</p>
+            </div>
+
+            <div
+                style="background: #f0f9ff; padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid #bae6fd;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <input type="text" id="queryCode" placeholder="أدخل كود التتبع (4 أرقام)"
+                        style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 8px; min-width: 200px;"
+                        maxlength="4">
+                    <button id="btnQuery" class="btn-primary"
+                        style="padding: 12px 25px; border-radius: 8px;">استعلام</button>
+                </div>
+            </div>
+
+            <div id="queryResult"
+                style="display: none; padding: 20px; background: var(--white); border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+
+    <!-- Custom JS -->
+    <script src="firebase-config.js"></script>
+    <script>
+        const btnQuery = document.getElementById('btnQuery');
+        const queryCodeInput = document.getElementById('queryCode');
+        const resultBox = document.getElementById('queryResult');
+
+        async function performQuery(code) {
+            if (!code || isNaN(code)) {
+                alert('الرجاء إدخال كود صحيح.');
+                return;
+            }
+
+            queryCodeInput.value = code;
+            btnQuery.disabled = true;
+            btnQuery.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري البحث...';
+            resultBox.style.display = 'none';
+
+            try {
+                if (typeof db !== 'undefined' && db.app.options.apiKey !== 'YOUR_API_KEY') {
+                    const snapshot = await db.collection('consultations').where('trackingCode', '==', code.toString()).get();
+
+                    if (snapshot.empty) {
+                        resultBox.innerHTML = '<div style="text-align: center; padding: 20px;"><span style="color: #ef4444; font-size: 1.1rem;"><i class="fa-solid fa-triangle-exclamation fa-2x mb-3"></i><br>عذراً، لا يوجد طلب استشارة مسجل بهذا الكود.</span></div>';
+                    } else {
+                        const doc = snapshot.docs[0].data();
+                        let replyHTML = '';
+
+                        if (doc.status === 'replied' && doc.expertReply) {
+                            replyHTML = `<div style="margin-top: 20px; padding: 20px; background: #f0fdf4; border-radius: 12px; border: 2px solid #22c55e;">
+                                <strong style="color: #166534; font-size: 1.2rem;"><i class="fa-solid fa-check-circle"></i> رد الخبير العقاري (التقييم المبدئي):</strong>
+                                <p style="margin-top: 12px; color: #15803d; font-weight: 700; font-size: 1.1rem; line-height: 1.8;">${doc.expertReply}</p>
+                                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #bbf7d0; color: #166534; font-size: 0.95rem;">
+                                    <i class="fa-solid fa-circle-info"></i> <strong>تنبيه هام:</strong> الرقم أو السعر المذكور في هذا الرد هو تقييم مبدئي وليس دقيقاً بنسبة 100%. يرجى تحديد موعد زيارة ومعاينة على أرض الواقع لضمان دقة التقييم بشكل صحيح.
+                                </div>
+                            </div>`;
+                        } else {
+                            replyHTML = `<div style="margin-top: 20px; padding: 20px; background: #fffbeb; border-radius: 12px; border: 2px solid #f59e0b;">
+                                <strong style="color: #b45309; font-size: 1.2rem;"><i class="fa-solid fa-clock"></i> حالة الطلب:</strong>
+                                <p style="margin-top: 12px; color: #92400e; font-size: 1.05rem;">الطلب قيد المراجعة حالياً. لم يتم الرد عليه بعد، يرجى معاودة الاستعلام لاحقاً.</p>
+                            </div>`;
+                        }
+
+                        // Display the data the user entered
+                        resultBox.innerHTML = `
+                            <h3 style="color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">بيانات الاستشارة</h3>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fa-regular fa-user"></i> مقدم الطلب:</span>
+                                <span class="detail-value">${doc.clientName}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fa-solid fa-location-dot"></i> المنطقة:</span>
+                                <span class="detail-value">${doc.area}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fa-solid fa-building"></i> نوع العقار:</span>
+                                <span class="detail-value">${doc.propertyType}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label"><i class="fa-solid fa-align-right"></i> الوصف:</span>
+                                <span class="detail-value" style="display: block; margin-top: 5px; color: #64748b; background: #f8fafc; padding: 10px; border-radius: 6px;">${doc.propertyDesc}</span>
+                            </div>
+                            ${replyHTML}
+                        `;
+                    }
+                } else {
+                    // MOCK behavior
+                    await new Promise(r => setTimeout(r, 1000));
+                    resultBox.innerHTML = `<div style="margin-top: 10px; padding: 15px; background: #fffbeb; border-radius: 8px; border: 1px solid #fde68a;">
+                        <strong style="color: #b45309;"><i class="fa-solid fa-clock"></i> حالة الطلب:</strong> 
+                        <p style="margin-top: 8px; color: #92400e;">قيد المراجعة (وضع تجريبي لعدم تفعيل Firebase بعد).</p>
+                    </div>`;
+                }
+            } catch (error) {
+                console.error("Error querying: ", error);
+                resultBox.innerHTML = '<span style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> حدث خطأ أثناء الاتصال بقاعدة البيانات. تأكد من الاتصال بالإنترنت.</span>';
+            }
+
+            resultBox.style.display = 'block';
+            btnQuery.disabled = false;
+            btnQuery.innerHTML = 'استعلام';
+        }
+
+        btnQuery.addEventListener('click', () => {
+            performQuery(queryCodeInput.value.trim());
+        });
+
+        // Auto-query if code is in URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeFromUrl = urlParams.get('code');
+            if (codeFromUrl) {
+                performQuery(codeFromUrl);
+            }
+        });
+    </script>
+</body>
+
+</html>

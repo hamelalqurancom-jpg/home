@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عقارات مسير - تصفح العقارات</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-house-chimney"></i>
+                عقارات مسير
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">البوابة الرئيسية</a>
+                <a href="properties.html" class="active">العقارات</a>
+                <a href="calculator.html">حساب المساحة</a>
+                <a href="login.html?mode=login" class="btn-primary-outline"><i class="fa-solid fa-user-tie"></i> دخول السماسرة</a>
+            </nav>
+            <div class="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section & Smart Filter -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1>ابحث عن عقار أحلامك في مسير</h1>
+            <p>أفضل منصة إلكترونية احترافية لبيع وتأجير العقارات بكل سهولة وأمان.</p>
+            
+            <div class="search-filter">
+                <div class="filter-group">
+                    <label><i class="fa-solid fa-building"></i> نوع العقار</label>
+                    <select id="propertyType">
+                        <option value="all">الكل</option>
+                        <option value="apartment">شقة</option>
+                        <option value="house">منزل</option>
+                        <option value="villa">فيلا</option>
+                        <option value="land">أرض</option>
+                        <option value="shop">محل تجاري</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label><i class="fa-solid fa-money-bill-wave"></i> السعر الأقصى</label>
+                    <input type="number" id="maxPrice" placeholder="مثال: 500000">
+                </div>
+
+                <div class="filter-group">
+                    <label><i class="fa-solid fa-location-dot"></i> المنطقة داخل مسير</label>
+                    <select id="area">
+                        <option value="all">كل المناطق</option>
+                        <option value="center">وسط البلد</option>
+                        <option value="north">شمال مسير</option>
+                        <option value="south">جنوب مسير</option>
+                    </select>
+                </div>
+
+                <button class="btn-search" id="searchBtn"><i class="fa-solid fa-magnifying-glass"></i> بحث</button>
+            </div>
+            
+            <div style="margin-top: 30px; text-align: center;">
+                <button onclick="handleAddPropertyClick()" class="btn-primary" style="padding: 15px 40px; font-size: 1.2rem; border-radius: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); animation: pulse 2s infinite;">
+                    <i class="fa-solid fa-house-medical"></i> أضف عقارك الآن
+                </button>
+            </div>
+            <style>
+                @keyframes pulse {
+                    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+                    70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+                    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+                }
+            </style>
+        </div>
+    </section>
+
+    <!-- Smart Redirect Script -->
+    <script>
+        function handleAddPropertyClick() {
+            if (typeof auth !== 'undefined' && auth.currentUser) {
+                // User is logged in, redirect to dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                // Not logged in, show message and redirect to login
+                alert('عذراً، لإضافة عقارك الخاص والحصول على لوحة تحكم لإدارته، يرجى تسجيل الدخول أولاً.');
+                // Add a small delay to ensure alert is dismissed before redirect
+                setTimeout(() => {
+                    window.location.href = 'login.html?mode=signup&redirect=dashboard.html';
+                }, 100);
+            }
+        }
+    </script>
+
+    <!-- Properties Section -->
+    <section id="properties" class="properties-section container">
+        <div class="section-header">
+            <h2>أحدث العقارات المضافة</h2>
+            <p>تصفح أحدث العروض المتوفرة لدينا</p>
+        </div>
+
+        <div class="properties-grid" id="propertiesList">
+            <!-- Property Cards will be injected here via JS -->
+            <div class="loading">جاري تحميل العقارات...</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <h3><i class="fa-solid fa-house-chimney"></i> عقارات مسير</h3>
+                <p>المنصة الأولى لبيع وتأجير العقارات في مدينة مسير والمناطق المجاورة، نقدم لك أفضل العروض الموثوقة.</p>
+            </div>
+            <div class="footer-links">
+                <h4>روابط سريعة</h4>
+                <ul>
+                    <li><a href="index.html">البوابة الرئيسية</a></li>
+                    <li><a href="properties.html">العقارات</a></li>
+                    <li><a href="calculator.html">حساب المساحة</a></li>
+                    <li><a href="login.html?mode=login">دخول السماسرة</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>جميع الحقوق محفوظة &copy; 2026 منصة عقارات مسير.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+
+    <!-- Custom JS -->
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتب الفتح للاستثمار العقاري - حاسبة المساحات</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="app-container">
+        <header>
+            <div class="logo-container">
+                <i class="fas fa-landmark logo-icon"></i>
+                <div class="title-group">
+                    <h1>مكتب الفتح للاستثمار العقاري</h1>
+                    <p class="subtitle">المهندس / عمرو ابوالحاج</p>
+                </div>
+            </div>
+            <a href="tel:01061899703" class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>01061899703</span>
+            </a>
+        </header>
+
+        <main>
+            <div class="dashboard">
+                <!-- Calculator Section -->
+                <section class="calculator-card glass">
+                    <h2><i class="fas fa-calculator"></i> حاسبة مساحة الشكل</h2>
+                    <p class="section-desc">أدخل أبعاد المثلثين لحساب المساحة الكلية بدقة عالية.</p>
+
+                    <div class="triangles-grid">
+                        <!-- Triangle 1 -->
+                        <div class="triangle-form" id="triangle1">
+                            <h3>المثلث الأول</h3>
+                            <div class="input-group">
+                                <label>الحد البحري / القبلي (متر)</label>
+                                <input type="number" id="x1" placeholder="أدخل الطول" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>الحد الشرقي / الغربي (متر)</label>
+                                <input type="number" id="y1" placeholder="أدخل الطول" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>طول الوتر (متر)</label>
+                                <input type="number" id="z1" placeholder="أدخل الطول" step="0.01">
+                            </div>
+                            <div class="result-badge" id="res1">
+                                المساحة: 0 م²
+                            </div>
+                        </div>
+
+                        <!-- Triangle 2 -->
+                        <div class="triangle-form" id="triangle2">
+                            <h3>المثلث الثاني</h3>
+                            <div class="input-group">
+                                <label>الحد البحري / القبلي (متر)</label>
+                                <input type="number" id="x2" placeholder="أدخل الطول" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>الحد الشرقي / الغربي (متر)</label>
+                                <input type="number" id="y2" placeholder="أدخل الطول" step="0.01">
+                            </div>
+                            <div class="input-group">
+                                <label>طول الوتر (متر)</label>
+                                <input type="number" id="z2" placeholder="أدخل الطول" step="0.01">
+                            </div>
+                            <div class="result-badge" id="res2">
+                                المساحة: 0 م²
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="total-section">
+                        <button id="calculateBtn" class="primary-btn">
+                            <i class="fas fa-sync-alt"></i> حساب المساحة الكلية
+                        </button>
+                        <div class="total-result" id="totalArea">
+                            <span>المساحة الإجمالية:</span>
+                            <strong id="totalValue">0.00</strong>
+                            <span class="unit">متر مربع</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History & Sketch Section -->
+                <aside class="side-panel">
+                    <div class="sketch-card glass">
+                        <h3><i class="fas fa-draw-polygon"></i> كروكي القطعة</h3>
+                        <canvas id="landCanvas"></canvas>
+                        <p class="sketch-hint">الرسم توضيحي بناءً على الأبعاد المدخلة</p>
+                    </div>
+                    <div class="history-card glass">
+                        <h3><i class="fas fa-history"></i> السجل الأخير</h3>
+                        <div id="historyList" class="history-list">
+                            <p class="empty-msg">لا توجد حسابات سابقة</p>
+                        </div>
+                        <button id="clearHistory" class="text-btn">مسح السجل</button>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2024 مكتب الفتح للاستثمار العقاري. جميع الحقوق محفوظة.</p>
+            <p class="designer-credit">
+                تصميم المهندس / احمد عمرو ابوالحاج
+                <a href="tel:01001352771">01001352771</a>
+            </p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

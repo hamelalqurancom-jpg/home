@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عقارات مسير - البوابة الرئيسية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        .portal-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--light) 0%, #e2e8f0 100%);
+            padding: 40px 20px;
+        }
+        .portal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1000px;
+            width: 100%;
+        }
+        .portal-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .portal-header h1 {
+            color: var(--primary);
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .portal-header p {
+            color: var(--dark, #334155); /* Fallback to a clear dark gray if --dark isn't set */
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+        .portal-card {
+            background: var(--white);
+            padding: 40px 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+            border: 2px solid transparent;
+        }
+        .portal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        .portal-card i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+        .portal-card:hover i {
+            transform: scale(1.1);
+        }
+        .portal-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .portal-card p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-section">
+        <div class="portal-container">
+            <div class="portal-header">
+                <h1><i class="fa-solid fa-house-chimney"></i> عقارات مسير</h1>
+                <p>المنصة الإلكترونية الأولى للعقارات، اختر كيف تريد المتابعة</p>
+            </div>
+            
+            <div class="portal-grid">
+                <!-- 1. إنشاء حساب -->
+                <a href="login.html?mode=signup" class="portal-card">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <h3>إنشاء حساب عقاري</h3>
+                    <p>مخصص للسماسرة وأصحاب العقارات لبناء بروفايل خاص بهم</p>
+                </a>
+                
+                <!-- 2. تسجيل الدخول -->
+                <a href="login.html?mode=login" class="portal-card">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <h3>تسجيل دخول</h3>
+                    <p>للوصول إلى لوحة التحكم الشخصية وإدارة العقارات</p>
+                </a>
+                
+                <!-- 3. حساب مساحة -->
+                <a href="calculator.html" class="portal-card">
+                    <i class="fa-solid fa-calculator"></i>
+                    <h3>حساب مساحة</h3>
+                    <p>أداة هندسية تتيح لك إدخال الأبعاد وحساب المساحة الإجمالية</p>
+                </a>
+                
+                <!-- 4. دخول كزائر -->
+                <a href="properties.html" class="portal-card">
+                    <i class="fa-solid fa-magnifying-glass-location"></i>
+                    <h3>الدخول كزائر</h3>
+                    <p>تخطي التسجيل وتوجه مباشرة لتصفح العقارات والبحث فيها</p>
+                </a>
+
+                <!-- 5. استشارة عقارية -->
+                <a href="consultation.html" class="portal-card">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <h3>استشارة وتقييم عقاري</h3>
+                    <p>للحصول على تقييم دقيق لعقارك أو المساعدة في عمليات الفصال</p>
+                </a>
+
+                <!-- 6. متابعة استشارة -->
+                <a href="track.html" class="portal-card">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <h3>متابعة حالة استشارة</h3>
+                    <p>استعلم عن طلب التقييم برقم الكود أو بمسح الباركود</p>
+                </a>
+
+                <!-- 7. لوحة الإدارة -->
+                <a href="master_dashboard.html" class="portal-card" style="border-color: #ef4444;">
+                    <i class="fa-solid fa-user-shield" style="color: #ef4444;"></i>
+                    <h3 style="color: #ef4444;">لوحة تحكم الإدارة (Master)</h3>
+                    <p>مخصصة لمدير النظام لمراقبة العقارات، الاستشارات، والردود.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

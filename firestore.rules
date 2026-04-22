@@ -1,0 +1,13 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // These are the default test-mode rules.
+    // Currently, they allow any client to read and write to the database.
+    // This is necessary for the Master Dashboard to function since it doesn't currently use Firebase Auth for the admin.
+    match /{document=**} {
+      allow read, write: if request.time < timestamp.date(2027, 5, 23);
+    }
+  }
+}
