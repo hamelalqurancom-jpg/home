@@ -352,13 +352,35 @@
                     document.getElementById('uploadFill').style.width = '20%';
 
                     // 1. Upload Images
-                    const uploadPromises = Array.from(files).map(async (file) => {
+                    const downloadURLs = [];
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
                         const storageRef = storage.ref('consultations/' + Date.now() + '_' + file.name);
-                        const snapshot = await storageRef.put(file);
-                        return await snapshot.ref.getDownloadURL();
-                    });
+                        const uploadTask = storageRef.put(file);
 
-                    const downloadURLs = await Promise.all(uploadPromises);
+                        await new Promise((resolve, reject) => {
+                            uploadTask.on('state_changed', 
+                                (snapshot) => {
+                                    // Calculate progress for current file
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    // Scale to our 20%-70% range
+                                    const baseProgress = 20 + (i * (50 / files.length));
+                                    const currentProgress = baseProgress + ((progress / 100) * (50 / files.length));
+                                    document.getElementById('uploadFill').style.width = currentProgress + '%';
+                                }, 
+                                (error) => {
+                                    console.error("Upload error:", error);
+                                    reject(error);
+                                }, 
+                                async () => {
+                                    const url = await uploadTask.snapshot.ref.getDownloadURL();
+                                    downloadURLs.push(url);
+                                    resolve();
+                                }
+                            );
+                        });
+                    }
+
                     document.getElementById('uploadFill').style.width = '70%';
 
                     // 2. Save New Area if it was custom

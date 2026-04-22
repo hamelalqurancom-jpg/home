@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
         .dashboard-container {
             max-width: 800px;
             margin: 0 auto;
@@ -127,6 +128,7 @@
             border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;
         }
         .btn-delete:hover { background: #ef4444; color: #fff; }
+    </style>
 </head>
 
 <body class="bg-light">
@@ -419,13 +421,32 @@
                         document.getElementById('uploadFill').style.width = '30%';
 
                         // Upload Multiple Images to Firebase Storage
-                        const uploadPromises = Array.from(files).map(async (file) => {
+                        for (let i = 0; i < files.length; i++) {
+                            const file = files[i];
                             const storageRef = storage.ref('properties/' + Date.now() + '_' + file.name);
-                            const snapshot = await storageRef.put(file);
-                            return await snapshot.ref.getDownloadURL();
-                        });
+                            const uploadTask = storageRef.put(file);
 
-                        downloadURLs = await Promise.all(uploadPromises);
+                            await new Promise((resolve, reject) => {
+                                uploadTask.on('state_changed', 
+                                    (snapshot) => {
+                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                        const baseProgress = 30 + (i * (50 / files.length));
+                                        const currentProgress = baseProgress + ((progress / 100) * (50 / files.length));
+                                        document.getElementById('uploadFill').style.width = currentProgress + '%';
+                                    }, 
+                                    (error) => {
+                                        console.error("Upload error:", error);
+                                        reject(error);
+                                    }, 
+                                    async () => {
+                                        const url = await uploadTask.snapshot.ref.getDownloadURL();
+                                        downloadURLs.push(url);
+                                        resolve();
+                                    }
+                                );
+                            });
+                        }
+                        
                         document.getElementById('uploadFill').style.width = '80%';
                     }
 
