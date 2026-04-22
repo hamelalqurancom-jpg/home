@@ -1,11 +1,15 @@
 /* ================= Variables & Base ================= */
 :root {
-    --primary: #0ea5e9;       /* Sky Blue */
+    --primary: #0ea5e9;
+    /* Sky Blue */
     --primary-hover: #0284c7;
-    --secondary: #10b981;     /* Calm Green */
+    --secondary: #10b981;
+    /* Calm Green */
     --secondary-hover: #059669;
-    --dark: #334155;          /* Slate dark */
-    --light: #f8f9fa;         /* Light Gray */
+    --dark: #334155;
+    /* Slate dark */
+    --light: #f8f9fa;
+    /* Light Gray */
     --white: #ffffff;
     --border: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -26,7 +30,9 @@ body {
     line-height: 1.6;
 }
 
-.bg-light { background-color: var(--light); }
+.bg-light {
+    background-color: var(--light);
+}
 
 a {
     text-decoration: none;
@@ -34,7 +40,9 @@ a {
     transition: var(--transition);
 }
 
-ul { list-style: none; }
+ul {
+    list-style: none;
+}
 
 .container {
     max-width: 1200px;
@@ -45,7 +53,7 @@ ul { list-style: none; }
 /* ================= Header ================= */
 .header {
     background-color: var(--white);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -78,7 +86,8 @@ ul { list-style: none; }
     font-size: 1.1rem;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover,
+.nav-links a.active {
     color: var(--primary);
 }
 
@@ -104,7 +113,9 @@ ul { list-style: none; }
     gap: 8px;
 }
 
-.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
 
 .btn-primary-outline {
     border: 2px solid var(--primary);
@@ -136,7 +147,9 @@ ul { list-style: none; }
     gap: 8px;
 }
 
-.btn-whatsapp:hover { background-color: #128C7E; }
+.btn-whatsapp:hover {
+    background-color: #128C7E;
+}
 
 .btn-call {
     background-color: var(--secondary);
@@ -152,7 +165,9 @@ ul { list-style: none; }
     gap: 8px;
 }
 
-.btn-call:hover { background-color: var(--secondary-hover); }
+.btn-call:hover {
+    background-color: var(--secondary-hover);
+}
 
 /* ================= Hero & Search ================= */
 .hero {
@@ -167,7 +182,10 @@ ul { list-style: none; }
 
 .hero-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1;
 }
@@ -183,7 +201,7 @@ ul { list-style: none; }
     font-size: 3rem;
     font-weight: 800;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .hero p {
@@ -216,7 +234,8 @@ ul { list-style: none; }
     color: var(--dark);
 }
 
-.filter-group select, .filter-group input {
+.filter-group select,
+.filter-group input {
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -224,7 +243,8 @@ ul { list-style: none; }
     outline: none;
 }
 
-.filter-group select:focus, .filter-group input:focus {
+.filter-group select:focus,
+.filter-group input:focus {
     border-color: var(--primary);
 }
 
@@ -240,7 +260,9 @@ ul { list-style: none; }
     transition: var(--transition);
 }
 
-.btn-search:hover { background-color: var(--primary-hover); }
+.btn-search:hover {
+    background-color: var(--primary-hover);
+}
 
 /* ================= Properties Grid ================= */
 .properties-section {
@@ -397,7 +419,9 @@ ul { list-style: none; }
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
 }
 
-.w-100 { width: 100%; }
+.w-100 {
+    width: 100%;
+}
 
 .form-footer {
     margin-top: 20px;
@@ -483,8 +507,17 @@ ul { list-style: none; }
 }
 
 /* ================= Touch Targets & Forms ================= */
-button, input, select, textarea, .btn-primary, .btn-primary-outline, .btn-whatsapp, .btn-call, .tab-btn {
-    min-height: 48px; /* Apple/Google recommended touch target size */
+button,
+input,
+select,
+textarea,
+.btn-primary,
+.btn-primary-outline,
+.btn-whatsapp,
+.btn-call,
+.tab-btn {
+    min-height: 48px;
+    /* Apple/Google recommended touch target size */
 }
 
 /* ================= Responsive ================= */
@@ -492,40 +525,51 @@ button, input, select, textarea, .btn-primary, .btn-primary-outline, .btn-whatsa
     .nav-links {
         display: none;
     }
+
     .mobile-menu-btn {
         display: block;
     }
+
     .search-filter {
         flex-direction: column;
         align-items: stretch;
         gap: 15px;
     }
+
     .btn-search {
         margin-top: 10px;
         width: 100%;
     }
+
     .hero {
         height: 500px;
     }
+
     .hero h1 {
         font-size: 2rem;
         line-height: 1.4;
     }
+
     .hero p {
         font-size: 1.1rem;
     }
-    .properties-grid, .my-properties-grid {
+
+    .properties-grid,
+    .my-properties-grid {
         grid-template-columns: 1fr !important;
     }
+
     .form-row {
         grid-template-columns: 1fr !important;
     }
+
     .profile-info {
         flex-direction: column;
         align-items: center;
         text-align: center;
         margin-top: -70px !important;
     }
+
     .profile-avatar {
         margin-left: 0 !important;
         margin-bottom: 15px;
@@ -533,18 +577,23 @@ button, input, select, textarea, .btn-primary, .btn-primary-outline, .btn-whatsa
         height: 100px !important;
         font-size: 3rem !important;
     }
+
     .profile-tabs {
         flex-direction: column;
         gap: 10px;
     }
+
     .auth-container {
         padding: 30px 20px;
     }
+
     .footer-content {
         flex-direction: column;
         text-align: center;
     }
-    .footer-brand, .footer-links {
+
+    .footer-brand,
+    .footer-links {
         min-width: 100%;
     }
 }

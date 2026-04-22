@@ -18,9 +18,11 @@ try {
         } else {
             app = firebase.app();
         }
-        db = firebase.firestore();
-        storage = firebase.storage();
-        auth = firebase.auth();
+        
+        // Initialize services only if their SDKs are loaded
+        if (typeof firebase.firestore === 'function') db = firebase.firestore();
+        if (typeof firebase.storage === 'function') storage = firebase.storage();
+        if (typeof firebase.auth === 'function') auth = firebase.auth();
     }
 } catch (error) {
     console.error("Firebase initialization error:", error);
