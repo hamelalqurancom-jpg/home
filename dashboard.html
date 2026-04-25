@@ -402,90 +402,81 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع والنشر...';
 
             try {
-                // Check if Firebase is actually configured
-                if (typeof storage !== 'undefined' && storage.app.options.apiKey !== 'YOUR_API_KEY') {
-                    
-                    let downloadURLs = [];
-                    if (files.length > 0) {
-                        document.getElementById('uploadProgress').style.display = 'block';
-                        document.getElementById('uploadFill').style.width = '30%';
+                // Remove the old check and use the current state
+                const alertBox = document.getElementById('alertBox');
+                alertBox.style.display = 'none';
+                
+                document.getElementById('uploadProgress').style.display = 'block';
+                document.getElementById('uploadFill').style.width = '10%';
 
-                        // Upload Multiple Images to Firebase Storage
-                        for (let i = 0; i < files.length; i++) {
-                            const file = files[i];
-                            const storageRef = storage.ref('properties/' + Date.now() + '_' + file.name);
-                            const uploadTask = storageRef.put(file);
+                const downloadURLs = [];
+                if (files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const storageRef = storage.ref('properties/' + Date.now() + '_' + file.name);
+                        const uploadTask = storageRef.put(file);
 
-                            await new Promise((resolve, reject) => {
-                                uploadTask.on('state_changed', 
-                                    (snapshot) => {
-                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                        const baseProgress = 30 + (i * (50 / files.length));
-                                        const currentProgress = baseProgress + ((progress / 100) * (50 / files.length));
-                                        document.getElementById('uploadFill').style.width = currentProgress + '%';
-                                    }, 
-                                    (error) => {
-                                        console.error("Upload error:", error);
-                                        reject(error);
-                                    }, 
-                                    async () => {
-                                        const url = await uploadTask.snapshot.ref.getDownloadURL();
-                                        downloadURLs.push(url);
-                                        resolve();
-                                    }
-                                );
-                            });
-                        }
-                        
-                        document.getElementById('uploadFill').style.width = '80%';
+                        await new Promise((resolve, reject) => {
+                            uploadTask.on('state_changed', 
+                                (snapshot) => {
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    const baseProgress = 10 + (i * (70 / files.length));
+                                    const currentProgress = baseProgress + ((progress / 100) * (70 / files.length));
+                                    document.getElementById('uploadFill').style.width = currentProgress + '%';
+                                }, 
+                                (error) => reject(error), 
+                                async () => {
+                                    const url = await uploadTask.snapshot.ref.getDownloadURL();
+                                    downloadURLs.push(url);
+                                    resolve();
+                                }
+                            );
+                        });
                     }
-
-                    // Save property data to Firestore
-                    await db.collection('properties').add({
-                        title: document.getElementById('propTitle').value,
-                        brokerName: document.getElementById('brokerName').value,
-                        type: document.getElementById('propType').value,
-                        area: document.getElementById('propArea').value,
-                        price: parseInt(document.getElementById('propPrice').value),
-                        size: parseInt(document.getElementById('propSize').value),
-                        floors: document.getElementById('propFloors').value ? parseInt(document.getElementById('propFloors').value) : 0,
-                        brokerPhone: document.getElementById('propPhone').value,
-                        brokerWhatsApp: "2" + document.getElementById('propPhone').value, // Assuming Egypt code
-                        description: document.getElementById('propDesc').value,
-                        imageUrl: downloadURLs.length > 0 ? downloadURLs[0] : 'https://placehold.co/600x400?text=بدون+صورة', // primary image
-                        imageUrls: downloadURLs, // all images
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        brokerId: currentUserId || 'anonymous'
-                    });
-
-                    document.getElementById('uploadFill').style.width = '100%';
-                    finishUpload();
-
-                } else {
-                    // Mock behavior if Firebase isn't configured
-                    document.getElementById('uploadProgress').style.display = 'block';
-                    document.getElementById('uploadFill').style.width = '100%';
-                    await new Promise(r => setTimeout(r, 1500));
-                    finishUpload();
                 }
 
-                function finishUpload() {
-                    alertBox.className = 'alert alert-success';
-                    alertBox.textContent = 'تم نشر العقار بنجاح!';
-                    alertBox.style.display = 'block';
-                    document.getElementById('addPropertyForm').reset();
-                    document.getElementById('fileName').textContent = "اضغط هنا لاختيار الصور";
-                    document.getElementById('thumbnailsContainer').innerHTML = '';
+                document.getElementById('uploadFill').style.width = '90%';
+
+                // Save property data to Firestore
+                await db.collection('properties').add({
+                    title: document.getElementById('propTitle').value,
+                    brokerName: document.getElementById('brokerName').value,
+                    type: document.getElementById('propType').value,
+                    area: document.getElementById('propArea').value,
+                    price: parseInt(document.getElementById('propPrice').value) || 0,
+                    size: parseInt(document.getElementById('propSize').value) || 0,
+                    floors: document.getElementById('propFloors').value ? parseInt(document.getElementById('propFloors').value) : 0,
+                    brokerPhone: document.getElementById('propPhone').value,
+                    brokerWhatsApp: "2" + document.getElementById('propPhone').value,
+                    description: document.getElementById('propDesc').value,
+                    imageUrl: downloadURLs.length > 0 ? downloadURLs[0] : 'https://placehold.co/600x400?text=بدون+صورة',
+                    imageUrls: downloadURLs,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    brokerId: currentUserId || 'anonymous'
+                });
+
+                document.getElementById('uploadFill').style.width = '100%';
+                
+                alertBox.className = 'alert alert-success';
+                alertBox.textContent = 'تم نشر العقار بنجاح! سيظهر الآن في الصفحة الرئيسية.';
+                alertBox.style.display = 'block';
+
+                document.getElementById('addPropertyForm').reset();
+                document.getElementById('fileName').textContent = "اضغط هنا لاختيار الصور";
+                document.getElementById('thumbnailsContainer').innerHTML = '';
+                
+                setTimeout(() => {
                     document.getElementById('uploadProgress').style.display = 'none';
-                    document.getElementById('uploadFill').style.width = '0%';
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-plus"></i> نشر العقار';
-                }
+                    loadMyProperties(currentUserId);
+                }, 2000);
 
             } catch (error) {
-                console.error(error);
+                console.error("Upload Error:", error);
+                const alertBox = document.getElementById('alertBox');
                 alertBox.className = 'alert alert-error';
-                alertBox.textContent = 'حدث خطأ أثناء رفع العقار، تأكد من الاتصال. ' + error.message;
+                alertBox.textContent = 'خطأ أثناء الرفع: ' + (error.message || "حدث خطأ غير متوقع");
                 alertBox.style.display = 'block';
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-plus"></i> نشر العقار';

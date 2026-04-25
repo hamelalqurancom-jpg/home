@@ -1,46 +1,7 @@
-// Mock Data for demonstration in case Firebase is not configured yet
-
-// Mock Data for demonstration
-const mockProperties = [
-    {
-        id: '1',
-        title: 'فيلا فاخرة بتشطيب سوبر لوكس',
-        type: 'villa',
-        price: 2500000,
-        area: 'center',
-        description: 'فيلا راقية جداً في وسط مسير، قريبة من جميع الخدمات. تحتوي على حديقة خاصة وجراج.',
-        imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        brokerPhone: '01000000000',
-        brokerWhatsApp: '201000000000'
-    },
-    {
-        id: '2',
-        title: 'شقة سكنية مساحة 150 متر',
-        type: 'apartment',
-        price: 650000,
-        area: 'north',
-        description: 'شقة نصف تشطيب، 3 غرف وصالة وحمام ومطبخ. موقع متميز جداً تطل على شارع رئيسي.',
-        imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        brokerPhone: '01111111111',
-        brokerWhatsApp: '201111111111'
-    },
-    {
-        id: '3',
-        title: 'محل تجاري للبيع',
-        type: 'shop',
-        price: 900000,
-        area: 'south',
-        description: 'محل تجاري بموقع حيوي مناسب لجميع الأنشطة التجارية والمطاعم.',
-        imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-        brokerPhone: '01222222222',
-        brokerWhatsApp: '201222222222'
-    }
-];
-
 document.addEventListener('DOMContentLoaded', async () => {
     const propertiesList = document.getElementById('propertiesList');
     const searchBtn = document.getElementById('searchBtn');
-    let allProperties = []; // To store fetched properties for filtering
+    let allProperties = [];
 
     // Display properties
     function displayProperties(properties) {
@@ -49,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         propertiesList.innerHTML = '';
 
         if (properties.length === 0) {
-            propertiesList.innerHTML = '<div class="alert alert-error w-100" style="grid-column: 1 / -1;">عفواً، لا توجد عقارات مطابقة للبحث.</div>';
+            propertiesList.innerHTML = '<div class="alert alert-error w-100" style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fff; border-radius: 12px; box-shadow: var(--shadow-sm);">عفواً، لا توجد عقارات مضافة حالياً.</div>';
             return;
         }
 
@@ -57,18 +18,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             const card = document.createElement('div');
             card.className = 'property-card';
 
-            // Format price to currency
             const formatter = new Intl.NumberFormat('ar-EG', {
                 style: 'currency',
                 currency: 'EGP',
                 maximumFractionDigits: 0
             });
 
-            let areaName = prop.area === 'center' ? 'وسط البلد' : (prop.area === 'north' ? 'شمال مسير' : 'جنوب مسير');
-            let typeName = prop.type === 'apartment' ? 'شقة' : (prop.type === 'house' ? 'منزل' : (prop.type === 'villa' ? 'فيلا' : (prop.type === 'land' ? 'أرض' : 'محل تجاري')));
+            // Map types to Arabic labels if known, else use the raw value
+            const typesMap = {
+                'apartment': 'شقة',
+                'house': 'منزل',
+                'villa': 'فيلا',
+                'land': 'أرض',
+                'shop': 'محل تجاري'
+            };
+            let typeName = typesMap[prop.type] || prop.type || 'عقار';
+
+            // Map areas to Arabic labels if known, else use raw value
+            const areasMap = {
+                'center': 'وسط البلد',
+                'north': 'شمال مسير',
+                'south': 'جنوب مسير'
+            };
+            let areaName = areasMap[prop.area] || prop.area || 'غير محدد';
 
             card.innerHTML = `
-                <img src="${prop.imageUrl}" alt="${prop.title}" class="property-img">
+                <img src="${prop.imageUrl || 'https://placehold.co/600x400?text=بدون+صورة'}" alt="${prop.title}" class="property-img">
                 <div class="property-content">
                     <div class="property-price">${formatter.format(prop.price)}</div>
                     <h3 class="property-title">${prop.title}</h3>
@@ -101,26 +76,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             if (typeof db !== 'undefined') {
                 const snapshot = await db.collection('properties').orderBy('createdAt', 'desc').get();
-                if (!snapshot.empty) {
-                    allProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                } else {
-                    // Fallback to mock data if Firestore is empty
-                    allProperties = mockProperties;
-                }
-            } else {
-                allProperties = mockProperties;
+                allProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                displayProperties(allProperties);
             }
-            displayProperties(allProperties);
         } catch (error) {
             console.error("Error fetching properties:", error);
-            // Fallback to mock data if there's a config error
-            allProperties = mockProperties;
-            displayProperties(allProperties);
+            propertiesList.innerHTML = '<div class="alert alert-error">حدث خطأ أثناء تحميل البيانات.</div>';
         }
     }
 
     // Initial load
-    await loadProperties();
+    loadProperties();
 
     // Filter Logic
     if (searchBtn) {
