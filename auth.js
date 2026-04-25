@@ -120,12 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...';
 
             try {
-                if (typeof auth !== 'undefined') {
-                    // Actual Firebase Auth
-                    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-                    const userCredential = await auth.createUserWithEmailAndPassword(virtualEmail, password);
+                if (typeof firebase !== 'undefined' && firebase.auth) {
+                    const authInstance = firebase.auth();
+                    await authInstance.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                    const userCredential = await authInstance.createUserWithEmailAndPassword(virtualEmail, password);
+                    
                     // Store extra data in Firestore
-                    await db.collection('brokers').doc(userCredential.user.uid).set({
+                    await firebase.firestore().collection('brokers').doc(userCredential.user.uid).set({
                         name: name,
                         phone: phone,
                         password: password,

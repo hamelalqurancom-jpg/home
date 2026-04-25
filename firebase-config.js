@@ -9,23 +9,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-var app, db, storage, auth;
-
-try {
-    if (typeof firebase !== 'undefined') {
-        if (!firebase.apps.length) {
-            app = firebase.initializeApp(firebaseConfig);
-        } else {
-            app = firebase.app();
-        }
-        
-        // Initialize services
-        db = firebase.firestore();
-        storage = firebase.storage();
-        auth = firebase.auth();
-        
-        console.log("Firebase Connected: estebain-1906b");
-    }
-} catch (error) {
-    console.error("Firebase Error:", error);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
 }
+
+var db = firebase.firestore();
+var storage = firebase.storage();
+var auth = firebase.auth();
