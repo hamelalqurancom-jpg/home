@@ -1,11 +1,11 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyAfbB8f3gVpykOgxcTaBrUB7s209PLp9Lg",
-  authDomain: "home-26331.web.app",
-  projectId: "home-26331",
-  storageBucket: "home-26331.firebasestorage.app",
-  messagingSenderId: "75590524459",
-  appId: "1:75590524459:web:b2a96dcfc091bfee45d46e",
-  measurementId: "G-7RC6XBPSGF"
+  apiKey: "AIzaSyCGEHnD4MXQjWZTz5csZ8hAC72UvR1FX-U",
+  authDomain: "estebain-1906b.firebaseapp.com",
+  projectId: "estebain-1906b",
+  storageBucket: "estebain-1906b.firebasestorage.app",
+  messagingSenderId: "32544885408",
+  appId: "1:32544885408:web:ad7160dca975a11d6157c5",
+  measurementId: "G-ZT4EFCQPZ7"
 };
 
 // Initialize Firebase
@@ -24,7 +24,7 @@ try {
         storage = firebase.storage();
         auth = firebase.auth();
         
-        console.log("Firebase Connected");
+        console.log("Firebase Connected: estebain-1906b");
     }
 } catch (error) {
     console.error("Firebase Error:", error);
