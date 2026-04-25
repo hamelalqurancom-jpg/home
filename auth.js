@@ -1,4 +1,4 @@
-// Simple Auth logic using Firestore only
+// Simple Manual Auth Logic (Firestore Only)
 document.addEventListener('DOMContentLoaded', () => {
     const loginFormWrapper = document.getElementById('loginForm');
     const signupFormWrapper = document.getElementById('signupForm');
@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const formSignup = document.getElementById('formSignup');
     const authAlert = document.getElementById('authAlert');
 
-    // Handle Toggle Forms
     if (showSignupLink && showLoginLink) {
         showSignupLink.addEventListener('click', (e) => {
             e.preventDefault();
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authAlert.style.display = 'none';
     }
 
-    // Login Submission (Simple Check)
+    // Login logic: Search Firestore directly
     if (formLogin) {
         formLogin.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -49,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
 
             try {
-                // Search for broker with matching phone and password
                 const snapshot = await db.collection('brokers')
                     .where('phone', '==', phone)
                     .where('password', '==', password)
@@ -59,16 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const brokerData = snapshot.docs[0].data();
                     const brokerId = snapshot.docs[0].id;
 
-                    // Save session locally
                     localStorage.setItem('brokerLogged', 'true');
                     localStorage.setItem('brokerId', brokerId);
                     localStorage.setItem('brokerName', brokerData.name);
                     localStorage.setItem('brokerPhone', brokerData.phone);
 
-                    showAlert("تم تسجيل الدخول بنجاح! جاري التوجيه...", false);
-                    setTimeout(() => {
-                        window.location.href = "dashboard.html";
-                    }, 1500);
+                    showAlert("تم تسجيل الدخول بنجاح!", false);
+                    setTimeout(() => window.location.href = "dashboard.html", 1000);
                 } else {
                     showAlert("رقم الهاتف أو كلمة المرور غير صحيحة.");
                     btn.disabled = false;
@@ -76,13 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error(error);
-                showAlert("حدث خطأ أثناء الاتصال بقاعدة البيانات.");
+                showAlert("حدث خطأ في الاتصال بقاعدة البيانات.");
                 btn.disabled = false;
             }
         });
     }
 
-    // Signup Submission (Simple Store)
+    // Signup logic: Save to Firestore directly
     if (formSignup) {
         formSignup.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -95,15 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
 
             try {
-                // Check if phone already exists
-                const checkSnapshot = await db.collection('brokers').where('phone', '==', phone).get();
-                if (!checkSnapshot.empty) {
-                    showAlert("رقم الهاتف هذا مسجل بالفعل.");
+                const check = await db.collection('brokers').where('phone', '==', phone).get();
+                if (!check.empty) {
+                    showAlert("هذا الرقم مسجل بالفعل.");
                     btn.disabled = false;
                     return;
                 }
 
-                // Simply add to Firestore
                 await db.collection('brokers').add({
                     name: name,
                     phone: phone,
@@ -111,18 +104,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                showAlert("تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.", false);
+                showAlert("تم إنشاء الحساب بنجاح!", false);
                 setTimeout(() => {
                     signupFormWrapper.style.display = 'none';
                     loginFormWrapper.style.display = 'block';
                     formSignup.reset();
                     btn.disabled = false;
                     btn.innerHTML = 'إنشاء الحساب';
-                }, 2000);
-
+                }, 1500);
             } catch (error) {
                 console.error(error);
-                showAlert("حدث خطأ أثناء حفظ البيانات.");
+                showAlert("حدث خطأ أثناء الحفظ.");
                 btn.disabled = false;
             }
         });
