@@ -284,31 +284,22 @@
     <!-- Custom JS -->
     <script src="firebase-config.js"></script>
     <script>
-        let currentUserId = null;
+        let currentUserId = localStorage.getItem('brokerId');
+        let currentUserName = localStorage.getItem('brokerName');
+        let currentUserPhone = localStorage.getItem('brokerPhone');
 
-        // Ensure user is logged in
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                // Fetch broker profile info
-                try {
-                    const doc = await db.collection('brokers').doc(user.uid).get();
-                    if (doc.exists) {
-                        document.getElementById('brokerDisplayName').textContent = doc.data().name;
-                        // Auto-fill broker info in form
-                        document.getElementById('brokerName').value = doc.data().name;
-                        document.getElementById('brokerName').readOnly = true; // prevent changing their own name
-                        document.getElementById('propPhone').value = doc.data().phone;
-                    } else {
-                        document.getElementById('brokerDisplayName').textContent = "السمسار / المالك";
-                    }
-                } catch(e) { console.log(e); }
-                
-                loadMyProperties(user.uid);
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        // Check if logged in via simple localStorage
+        if (localStorage.getItem('brokerLogged') === 'true' && currentUserId) {
+            document.getElementById('brokerDisplayName').textContent = currentUserName;
+            // Auto-fill broker info in form
+            document.getElementById('brokerName').value = currentUserName;
+            document.getElementById('brokerName').readOnly = true;
+            document.getElementById('propPhone').value = currentUserPhone;
+            
+            loadMyProperties(currentUserId);
+        } else {
+            window.location.href = 'login.html';
+        }
 
         function switchTab(event, tabId) {
             document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
@@ -505,11 +496,11 @@
         // Logout
         document.getElementById('btnLogout').addEventListener('click', (e) => {
             e.preventDefault();
-            if (typeof auth !== 'undefined' && auth.app.options.apiKey !== 'YOUR_API_KEY') {
-                auth.signOut().then(() => window.location.href = 'index.html');
-            } else {
-                window.location.href = 'index.html';
-            }
+            localStorage.removeItem('brokerLogged');
+            localStorage.removeItem('brokerId');
+            localStorage.removeItem('brokerName');
+            localStorage.removeItem('brokerPhone');
+            window.location.href = 'index.html';
         });
     </script>
 </body>
