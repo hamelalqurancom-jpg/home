@@ -277,7 +277,6 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
 
@@ -456,7 +455,7 @@
                         imageUrl: downloadURLs.length > 0 ? downloadURLs[0] : 'https://placehold.co/600x400?text=بدون+صورة', // primary image
                         imageUrls: downloadURLs, // all images
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        brokerId: auth.currentUser ? auth.currentUser.uid : 'anonymous'
+                        brokerId: currentUserId || 'anonymous'
                     });
 
                     document.getElementById('uploadFill').style.width = '100%';
