@@ -76,12 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التسجيل...';
 
             try {
-                if (typeof auth !== 'undefined' && auth.app.options.apiKey !== 'YOUR_API_KEY') {
+                if (typeof firebase !== 'undefined' && firebase.auth) {
                     // Actual Firebase Auth
-                    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-                    await auth.signInWithEmailAndPassword(virtualEmail, password);
+                    await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                    await firebase.auth().signInWithEmailAndPassword(virtualEmail, password);
                 } else {
-                    // Fallback mock delay
                     await new Promise(r => setTimeout(r, 1000));
                 }
                 
@@ -121,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الإنشاء...';
 
             try {
-                if (typeof auth !== 'undefined' && auth.app.options.apiKey !== 'YOUR_API_KEY') {
+                if (typeof auth !== 'undefined') {
                     // Actual Firebase Auth
                     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
                     const userCredential = await auth.createUserWithEmailAndPassword(virtualEmail, password);
@@ -129,11 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     await db.collection('brokers').doc(userCredential.user.uid).set({
                         name: name,
                         phone: phone,
-                        password: password, // As requested by the user for master control transparency
+                        password: password,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } else {
-                    // Fallback mock delay
                     await new Promise(r => setTimeout(r, 1000));
                 }
 
