@@ -1,4 +1,4 @@
-// Firebase Configuration (Replace with your actual config)
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAfbB8f3gVpykOgxcTaBrUB7s209PLp9Lg",
   authDomain: "home-26331.firebaseapp.com",
@@ -9,12 +9,14 @@ const firebaseConfig = {
   measurementId: "G-7RC6XBPSGF"
 };
 
-// Initialize Firebase only if not already initialized
-let app, db, storage, auth;
+// Initialize Firebase
+var app, db, storage, auth;
+
 try {
     if (typeof firebase !== 'undefined') {
         if (!firebase.apps.length) {
             app = firebase.initializeApp(firebaseConfig);
+            console.log("Firebase initialized successfully.");
         } else {
             app = firebase.app();
         }
@@ -22,7 +24,12 @@ try {
         // Initialize services only if their SDKs are loaded
         if (typeof firebase.firestore === 'function') db = firebase.firestore();
         if (typeof firebase.storage === 'function') storage = firebase.storage();
-        if (typeof firebase.auth === 'function') auth = firebase.auth();
+        if (typeof firebase.auth === 'function') {
+            auth = firebase.auth();
+            console.log("Auth service is ready.");
+        }
+    } else {
+        console.error("Firebase SDK not loaded! Make sure script tags are correct.");
     }
 } catch (error) {
     console.error("Firebase initialization error:", error);

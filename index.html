@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,7 @@
             background: linear-gradient(135deg, var(--light) 0%, #e2e8f0 100%);
             padding: 40px 20px;
         }
+
         .portal-container {
             display: flex;
             flex-direction: column;
@@ -23,28 +25,34 @@
             max-width: 1000px;
             width: 100%;
         }
+
         .portal-header {
             text-align: center;
             margin-bottom: 50px;
         }
+
         .portal-header h1 {
             color: var(--primary);
             font-size: 3.5rem;
             margin-bottom: 15px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
+
         .portal-header p {
-            color: var(--dark, #334155); /* Fallback to a clear dark gray if --dark isn't set */
+            color: var(--dark, #334155);
+            /* Fallback to a clear dark gray if --dark isn't set */
             font-size: 1.5rem;
             font-weight: 700;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
+
         .portal-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 25px;
             width: 100%;
         }
+
         .portal-card {
             background: var(--white);
             padding: 40px 20px;
@@ -59,25 +67,30 @@
             color: var(--dark);
             border: 2px solid transparent;
         }
+
         .portal-card:hover {
             transform: translateY(-10px);
             box-shadow: var(--shadow-lg);
             border-color: var(--primary);
         }
+
         .portal-card i {
             font-size: 3rem;
             color: var(--primary);
             margin-bottom: 20px;
             transition: var(--transition);
         }
+
         .portal-card:hover i {
             transform: scale(1.1);
         }
+
         .portal-card h3 {
             font-size: 1.3rem;
             margin-bottom: 10px;
             font-weight: 700;
         }
+
         .portal-card p {
             color: #64748b;
             font-size: 0.95rem;
@@ -85,6 +98,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="portal-section">
         <div class="portal-container">
@@ -92,7 +106,7 @@
                 <h1><i class="fa-solid fa-house-chimney"></i> عقارات مسير</h1>
                 <p>المنصة الإلكترونية الأولى للعقارات، اختر كيف تريد المتابعة</p>
             </div>
-            
+
             <div class="portal-grid">
                 <!-- 1. إنشاء حساب -->
                 <a href="login.html?mode=signup" class="portal-card">
@@ -100,21 +114,21 @@
                     <h3>إنشاء حساب عقاري</h3>
                     <p>مخصص للسماسرة وأصحاب العقارات لبناء بروفايل خاص بهم</p>
                 </a>
-                
+
                 <!-- 2. تسجيل الدخول -->
                 <a href="login.html?mode=login" class="portal-card">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     <h3>تسجيل دخول</h3>
                     <p>للوصول إلى لوحة التحكم الشخصية وإدارة العقارات</p>
                 </a>
-                
+
                 <!-- 3. حساب مساحة -->
                 <a href="calculator.html" class="portal-card">
                     <i class="fa-solid fa-calculator"></i>
                     <h3>حساب مساحة</h3>
                     <p>أداة هندسية تتيح لك إدخال الأبعاد وحساب المساحة الإجمالية</p>
                 </a>
-                
+
                 <!-- 4. دخول كزائر -->
                 <a href="properties.html" class="portal-card">
                     <i class="fa-solid fa-magnifying-glass-location"></i>
@@ -146,4 +160,5 @@
         </div>
     </div>
 </body>
+
 </html>
