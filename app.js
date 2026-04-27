@@ -74,14 +74,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!propertiesList) return;
         
         try {
-            if (typeof db !== 'undefined') {
+            if (typeof db !== 'undefined' && db) {
                 const snapshot = await db.collection('properties').orderBy('createdAt', 'desc').get();
                 allProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 displayProperties(allProperties);
+            } else {
+                throw new Error("لم يتم تهيئة قاعدة البيانات بشكل صحيح.");
             }
         } catch (error) {
             console.error("Error fetching properties:", error);
-            propertiesList.innerHTML = '<div class="alert alert-error">حدث خطأ أثناء تحميل البيانات.</div>';
+            propertiesList.innerHTML = `<div class="alert alert-error" style="grid-column: 1 / -1; text-align: center; padding: 20px;">
+                <i class="fa-solid fa-triangle-exclamation"></i> حدث خطأ أثناء تحميل البيانات: ${error.message || "تأكد من إعدادات Firebase"}
+            </div>`;
         }
     }
 

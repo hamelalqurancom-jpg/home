@@ -1,4 +1,5 @@
 const firebaseConfig = {
+    // تذكير: تأكد من إضافة رابط موقعك (مثل GitHub Pages) إلى Authorized Domains في لوحة تحكم Firebase
     apiKey: "AIzaSyCGEHnD4MXQjWZTz5csZ8hAC72UvR1FX-U",
     authDomain: "estebain-1906b.firebaseapp.com",
     projectId: "estebain-1906b",
@@ -8,10 +9,31 @@ const firebaseConfig = {
     measurementId: "G-ZT4EFCQPZ7"
 };
 
-// Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+// Cloudinary Configuration (As per point #5 of best practices)
+const cloudinaryConfig = {
+    cloudName: 'dwrhl6gjf', 
+    uploadPreset: 'asr-kareem' 
+};
 
-var db = firebase.firestore();
-var storage = firebase.storage();
+// Initialize Firebase with Error Handling
+var db, storage;
+
+try {
+    if (typeof firebase !== 'undefined') {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log("Firebase Initialized Successfully");
+        }
+        db = firebase.firestore();
+        storage = firebase.storage();
+        
+        // Expose globally to window for legacy scripts
+        window.db = db;
+        window.storage = storage;
+    } else {
+        console.error("Firebase SDK not loaded!");
+    }
+} catch (error) {
+    console.error("Firebase Initialization Error:", error);
+    alert("خطأ في الاتصال بقاعدة البيانات. يرجى التحقق من الإعدادات.");
+}

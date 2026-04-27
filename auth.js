@@ -48,7 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحقق...';
 
             try {
-                const snapshot = await db.collection('brokers')
+                // Ensure db is loaded (check window.db as well)
+                const firestore = db || window.db;
+                if (!firestore) throw new Error("قاعدة البيانات غير متصلة. يرجى التأكد من تحميل firebase-config.js بشكل صحيح.");
+
+                const snapshot = await firestore.collection('brokers')
                     .where('phone', '==', phone)
                     .where('password', '==', password)
                     .get();
@@ -70,9 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.innerHTML = 'تسجيل الدخول';
                 }
             } catch (error) {
-                console.error(error);
-                showAlert("حدث خطأ في الاتصال بقاعدة البيانات.");
+                console.error("Login Error:", error);
+                showAlert("حدث خطأ في الاتصال: " + (error.message || "تأكد من إعدادات Firebase"));
                 btn.disabled = false;
+                btn.innerHTML = 'تسجيل الدخول';
             }
         });
     }
@@ -90,14 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ...';
 
             try {
-                const check = await db.collection('brokers').where('phone', '==', phone).get();
+                const firestore = db || window.db;
+                if (!firestore) throw new Error("قاعدة البيانات غير متصلة.");
+
+                const check = await firestore.collection('brokers').where('phone', '==', phone).get();
                 if (!check.empty) {
                     showAlert("هذا الرقم مسجل بالفعل.");
                     btn.disabled = false;
+                    btn.innerHTML = 'إنشاء الحساب';
                     return;
                 }
 
-                await db.collection('brokers').add({
+                await firestore.collection('brokers').add({
                     name: name,
                     phone: phone,
                     password: password,
@@ -113,9 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.innerHTML = 'إنشاء الحساب';
                 }, 1500);
             } catch (error) {
-                console.error(error);
-                showAlert("حدث خطأ أثناء الحفظ.");
+                console.error("Signup Error:", error);
+                showAlert("حدث خطأ أثناء الحفظ: " + (error.message || "تأكد من اتصالك بالإنترنت"));
                 btn.disabled = false;
+                btn.innerHTML = 'إنشاء الحساب';
             }
         });
     }

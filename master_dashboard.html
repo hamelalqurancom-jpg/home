@@ -475,13 +475,14 @@
         }
 
         function initMasterDashboard() {
-            if (typeof db === 'undefined' || db.app.options.apiKey === 'YOUR_API_KEY') {
+            const firestore = db || window.db;
+            if (!firestore) {
                 alert("يرجى إعداد Firebase أولاً لتعمل لوحة التحكم بشكل حي.");
                 return;
             }
 
             // A. Real-time Consultations Listener
-            db.collection('consultations').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            firestore.collection('consultations').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
                 const tbody = document.getElementById('consultationsTableBody');
                 tbody.innerHTML = '';
                 
@@ -538,7 +539,7 @@
             });
 
             // B. Real-time Properties Listener
-            db.collection('properties').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            firestore.collection('properties').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
                 const tbody = document.getElementById('propertiesTableBody');
                 tbody.innerHTML = '';
                 
@@ -568,7 +569,7 @@
             });
 
             // C. Real-time Areas Listener
-            db.collection('areas').onSnapshot(snapshot => {
+            firestore.collection('areas').onSnapshot(snapshot => {
                 const list = document.getElementById('areasList');
                 list.innerHTML = '';
                 
@@ -591,7 +592,7 @@
             });
 
             // D. Real-time Users Listener
-            db.collection('brokers').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+            firestore.collection('brokers').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
                 const tbody = document.getElementById('usersTableBody');
                 tbody.innerHTML = '';
 
@@ -618,7 +619,7 @@
             });
 
             // E. Real-time Logs Listener
-            db.collection('logs').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+            firestore.collection('logs').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
                 const tbody = document.getElementById('logsTableBody');
                 tbody.innerHTML = '';
 
@@ -693,7 +694,8 @@
             btn.disabled = true;
 
             try {
-                await db.collection('consultations').doc(docId).update({
+                const firestore = db || window.db;
+                await firestore.collection('consultations').doc(docId).update({
                     expertReply: replyText,
                     status: 'replied',
                     repliedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -709,22 +711,24 @@
             btn.disabled = false;
         }
 
-        // --- 4. Deletion Actions ---
         async function deleteProperty(docId) {
             if (confirm('هل أنت متأكد من حذف هذا العقار نهائياً؟ ستختفي من المنصة تماماً.')) {
-                await db.collection('properties').doc(docId).delete();
+                const firestore = db || window.db;
+                await firestore.collection('properties').doc(docId).delete();
             }
         }
 
         async function deleteArea(docId) {
             if (confirm('هل أنت متأكد من حذف هذه المنطقة؟')) {
-                await db.collection('areas').doc(docId).delete();
+                const firestore = db || window.db;
+                await firestore.collection('areas').doc(docId).delete();
             }
         }
 
         async function deleteBroker(docId) {
-            if (confirm('تنبيه: سيتم حذف بيانات هذا السمسار من قاعدة البيانات. هل أنت متأكد؟ (تلميح: قد تبقى عقاراته معلقة في النظام، يفضل مسحها أولاً).')) {
-                await db.collection('brokers').doc(docId).delete();
+            if (confirm('تنبيه: سيتم حذف بيانات هذا السمسار من قاعدة البيانات. هل أنت متأكد؟')) {
+                const firestore = db || window.db;
+                await firestore.collection('brokers').doc(docId).delete();
             }
         }
     </script>

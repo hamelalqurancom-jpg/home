@@ -105,8 +105,10 @@
             resultBox.style.display = 'none';
 
             try {
-                if (typeof db !== 'undefined' && db.app.options.apiKey !== 'YOUR_API_KEY') {
-                    const snapshot = await db.collection('consultations').where('trackingCode', '==', code.toString()).get();
+                const firestore = db || window.db;
+                if (!firestore) throw new Error("قاعدة البيانات غير متصلة.");
+
+                const snapshot = await firestore.collection('consultations').where('trackingCode', '==', code.toString()).get();
 
                     if (snapshot.empty) {
                         resultBox.innerHTML = '<div style="text-align: center; padding: 20px;"><span style="color: #ef4444; font-size: 1.1rem;"><i class="fa-solid fa-triangle-exclamation fa-2x mb-3"></i><br>عذراً، لا يوجد طلب استشارة مسجل بهذا الكود.</span></div>';
@@ -151,13 +153,7 @@
                             ${replyHTML}
                         `;
                     }
-                } else {
-                    // MOCK behavior
-                    await new Promise(r => setTimeout(r, 1000));
-                    resultBox.innerHTML = `<div style="margin-top: 10px; padding: 15px; background: #fffbeb; border-radius: 8px; border: 1px solid #fde68a;">
-                        <strong style="color: #b45309;"><i class="fa-solid fa-clock"></i> حالة الطلب:</strong> 
-                        <p style="margin-top: 8px; color: #92400e;">قيد المراجعة (وضع تجريبي لعدم تفعيل Firebase بعد).</p>
-                    </div>`;
+                    }
                 }
             } catch (error) {
                 console.error("Error querying: ", error);

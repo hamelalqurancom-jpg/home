@@ -309,7 +309,10 @@
 
         async function loadMyProperties(uid) {
             const list = document.getElementById('myPropertiesList');
-            db.collection('properties').where('brokerId', '==', uid).onSnapshot(snapshot => {
+            const firestore = db || window.db;
+            if (!firestore) return;
+
+            firestore.collection('properties').where('brokerId', '==', uid).onSnapshot(snapshot => {
                 list.innerHTML = '';
                 document.getElementById('propCount').textContent = snapshot.size;
                 
@@ -343,8 +346,11 @@
         async function deleteMyProperty(propId) {
             if (confirm("هل أنت متأكد من حذف هذا العقار نهائياً؟")) {
                 try {
+                    const firestore = db || window.db;
+                    if (!firestore) throw new Error("قاعدة البيانات غير متصلة.");
+
                     // Log the deletion action for the Master Admin
-                    await db.collection('logs').add({
+                    await firestore.collection('logs').add({
                         action: 'delete_property',
                         brokerId: currentUserId,
                         brokerName: document.getElementById('brokerName').value,
@@ -353,7 +359,7 @@
                     });
                     
                     // Proceed with deletion
-                    await db.collection('properties').doc(propId).delete();
+                    await firestore.collection('properties').doc(propId).delete();
                 } catch(e) {
                     alert("عذراً، حدث خطأ أو ليس لديك صلاحية الحذف.");
                 }
@@ -399,13 +405,10 @@
 
             alertBox.style.display = 'none';
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري الرفع والنشر...';
-
             try {
-                // Remove the old check and use the current state
-                const alertBox = document.getElementById('alertBox');
-                alertBox.style.display = 'none';
-                
+                const firestore = db || window.db;
+                if (!firestore) throw new Error("قاعدة البيانات غير متصلة.");
+
                 document.getElementById('uploadProgress').style.display = 'block';
                 document.getElementById('uploadFill').style.width = '10%';
 
@@ -413,32 +416,32 @@
                 if (files.length > 0) {
                     for (let i = 0; i < files.length; i++) {
                         const file = files[i];
-                        const storageRef = storage.ref('properties/' + Date.now() + '_' + file.name);
-                        const uploadTask = storageRef.put(file);
+                        
+                        // Cloudinary Upload Logic (Point #5 of Best Practices)
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('upload_preset', cloudinaryConfig.uploadPreset);
 
-                        await new Promise((resolve, reject) => {
-                            uploadTask.on('state_changed', 
-                                (snapshot) => {
-                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                                    const baseProgress = 10 + (i * (70 / files.length));
-                                    const currentProgress = baseProgress + ((progress / 100) * (70 / files.length));
-                                    document.getElementById('uploadFill').style.width = currentProgress + '%';
-                                }, 
-                                (error) => reject(error), 
-                                async () => {
-                                    const url = await uploadTask.snapshot.ref.getDownloadURL();
-                                    downloadURLs.push(url);
-                                    resolve();
-                                }
-                            );
+                        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`, {
+                            method: 'POST',
+                            body: formData
                         });
+
+                        if (!response.ok) throw new Error('فشل الرفع إلى Cloudinary');
+
+                        const data = await response.json();
+                        downloadURLs.push(data.secure_url);
+
+                        // Update progress bar
+                        const progress = ((i + 1) / files.length) * 80;
+                        document.getElementById('uploadFill').style.width = (10 + progress) + '%';
                     }
                 }
 
                 document.getElementById('uploadFill').style.width = '90%';
 
                 // Save property data to Firestore
-                await db.collection('properties').add({
+                await firestore.collection('properties').add({
                     title: document.getElementById('propTitle').value,
                     brokerName: document.getElementById('brokerName').value,
                     type: document.getElementById('propType').value,
@@ -474,7 +477,6 @@
 
             } catch (error) {
                 console.error("Upload Error:", error);
-                const alertBox = document.getElementById('alertBox');
                 alertBox.className = 'alert alert-error';
                 alertBox.textContent = 'خطأ أثناء الرفع: ' + (error.message || "حدث خطأ غير متوقع");
                 alertBox.style.display = 'block';
