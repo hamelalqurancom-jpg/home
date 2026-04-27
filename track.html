@@ -110,53 +110,64 @@
 
                 const snapshot = await firestore.collection('consultations').where('trackingCode', '==', code.toString()).get();
 
-                    if (snapshot.empty) {
-                        resultBox.innerHTML = '<div style="text-align: center; padding: 20px;"><span style="color: #ef4444; font-size: 1.1rem;"><i class="fa-solid fa-triangle-exclamation fa-2x mb-3"></i><br>عذراً، لا يوجد طلب استشارة مسجل بهذا الكود.</span></div>';
+                if (snapshot.empty) {
+                    resultBox.innerHTML = '<div style="text-align: center; padding: 20px;"><span style="color: #ef4444; font-size: 1.1rem;"><i class="fa-solid fa-triangle-exclamation fa-2x mb-3"></i><br>عذراً، لا يوجد طلب استشارة مسجل بهذا الكود. يرجى التأكد من كتابة الـ 4 أرقام بشكل صحيح.</span></div>';
+                } else {
+                    const doc = snapshot.docs[0].data();
+                    let replyHTML = '';
+
+                    if (doc.status === 'replied' && doc.expertReply) {
+                        replyHTML = `
+                        <div style="margin-top: 25px; padding: 20px; background: #f0fdf4; border-radius: 12px; border: 2px solid #22c55e; box-shadow: var(--shadow);">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <i class="fa-solid fa-check-circle" style="color: #22c55e; font-size: 1.5rem;"></i>
+                                <strong style="color: #166534; font-size: 1.25rem;">تم الانتهاء من التقييم:</strong>
+                            </div>
+                            <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #bbf7d0; color: #15803d; font-weight: 700; font-size: 1.2rem; line-height: 1.8; text-align: center;">
+                                ${doc.expertReply}
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #bbf7d0; color: #166534; font-size: 0.9rem; line-height: 1.5;">
+                                <i class="fa-solid fa-circle-info"></i> <strong>تنبيه هام:</strong> هذا التقييم مبدئي بناءً على المواصفات المذكورة. السعر النهائي يتطلب معاينة فنية على أرض الواقع.
+                            </div>
+                        </div>`;
                     } else {
-                        const doc = snapshot.docs[0].data();
-                        let replyHTML = '';
+                        replyHTML = `
+                        <div style="margin-top: 25px; padding: 20px; background: #fffbeb; border-radius: 12px; border: 2px solid #f59e0b; text-align: center;">
+                            <i class="fa-solid fa-clock-rotate-left fa-3x" style="color: #f59e0b; margin-bottom: 15px;"></i>
+                            <h3 style="color: #b45309; margin-bottom: 10px;">الطلب قيد المراجعة</h3>
+                            <p style="color: #92400e; font-size: 1.05rem;">يقوم الخبراء حالياً بدراسة طلبك وتحديد السعر العادل. يرجى معاودة الاستعلام لاحقاً (غالباً خلال 24 ساعة).</p>
+                        </div>`;
+                    }
 
-                        if (doc.status === 'replied' && doc.expertReply) {
-                            replyHTML = `<div style="margin-top: 20px; padding: 20px; background: #f0fdf4; border-radius: 12px; border: 2px solid #22c55e;">
-                                <strong style="color: #166534; font-size: 1.2rem;"><i class="fa-solid fa-check-circle"></i> رد الخبير العقاري (التقييم المبدئي):</strong>
-                                <p style="margin-top: 12px; color: #15803d; font-weight: 700; font-size: 1.1rem; line-height: 1.8;">${doc.expertReply}</p>
-                                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #bbf7d0; color: #166534; font-size: 0.95rem;">
-                                    <i class="fa-solid fa-circle-info"></i> <strong>تنبيه هام:</strong> الرقم أو السعر المذكور في هذا الرد هو تقييم مبدئي وليس دقيقاً بنسبة 100%. يرجى تحديد موعد زيارة ومعاينة على أرض الواقع لضمان دقة التقييم بشكل صحيح.
-                                </div>
-                            </div>`;
-                        } else {
-                            replyHTML = `<div style="margin-top: 20px; padding: 20px; background: #fffbeb; border-radius: 12px; border: 2px solid #f59e0b;">
-                                <strong style="color: #b45309; font-size: 1.2rem;"><i class="fa-solid fa-clock"></i> حالة الطلب:</strong>
-                                <p style="margin-top: 12px; color: #92400e; font-size: 1.05rem;">الطلب قيد المراجعة حالياً. لم يتم الرد عليه بعد، يرجى معاودة الاستعلام لاحقاً.</p>
-                            </div>`;
-                        }
-
-                        // Display the data the user entered
-                        resultBox.innerHTML = `
-                            <h3 style="color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">بيانات الاستشارة</h3>
-                            <div class="detail-item">
+                    // Display the data the user entered
+                    resultBox.innerHTML = `
+                        <h3 style="color: var(--primary); margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <i class="fa-solid fa-clipboard-list"></i> تفاصيل طلبك
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="detail-item" style="border: none;">
                                 <span class="detail-label"><i class="fa-regular fa-user"></i> مقدم الطلب:</span>
                                 <span class="detail-value">${doc.clientName}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" style="border: none;">
                                 <span class="detail-label"><i class="fa-solid fa-location-dot"></i> المنطقة:</span>
                                 <span class="detail-value">${doc.area}</span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" style="border: none;">
                                 <span class="detail-label"><i class="fa-solid fa-building"></i> نوع العقار:</span>
                                 <span class="detail-value">${doc.propertyType}</span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label"><i class="fa-solid fa-align-right"></i> الوصف:</span>
-                                <span class="detail-value" style="display: block; margin-top: 5px; color: #64748b; background: #f8fafc; padding: 10px; border-radius: 6px;">${doc.propertyDesc}</span>
-                            </div>
-                            ${replyHTML}
-                        `;
-                    }
+                        </div>
+                        <div class="detail-item" style="margin-top: 15px;">
+                            <span class="detail-label"><i class="fa-solid fa-align-right"></i> وصف العقار كما أرسلته:</span>
+                            <span class="detail-value" style="display: block; margin-top: 8px; color: #64748b; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #f1f5f9; line-height: 1.6;">${doc.propertyDesc}</span>
+                        </div>
+                        ${replyHTML}
+                    `;
                 }
             } catch (error) {
                 console.error("Error querying: ", error);
-                resultBox.innerHTML = '<span style="color: #ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> حدث خطأ أثناء الاتصال بقاعدة البيانات. تأكد من الاتصال بالإنترنت.</span>';
+                resultBox.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation fa-2x"></i><br>حدث خطأ أثناء الاتصال بقاعدة البيانات. تأكد من اتصالك بالإنترنت.</div>';
             }
 
             resultBox.style.display = 'block';

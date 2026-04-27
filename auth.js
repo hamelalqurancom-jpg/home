@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Handle URL parameters for mode
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'signup') {
+        if (loginFormWrapper) loginFormWrapper.style.display = 'none';
+        if (signupFormWrapper) signupFormWrapper.style.display = 'block';
+    }
+
     function showAlert(msg, isError = true) {
         if (!authAlert) return;
         authAlert.style.display = 'block';
@@ -106,20 +113,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                await firestore.collection('brokers').add({
+                const newBrokerRef = await firestore.collection('brokers').add({
                     name: name,
                     phone: phone,
                     password: password,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                showAlert("تم إنشاء الحساب بنجاح!", false);
+                // Auto Login
+                localStorage.setItem('brokerLogged', 'true');
+                localStorage.setItem('brokerId', newBrokerRef.id);
+                localStorage.setItem('brokerName', name);
+                localStorage.setItem('brokerPhone', phone);
+
+                showAlert("تم إنشاء الحساب وتسجيل دخولك بنجاح!", false);
                 setTimeout(() => {
-                    signupFormWrapper.style.display = 'none';
-                    loginFormWrapper.style.display = 'block';
-                    formSignup.reset();
-                    btn.disabled = false;
-                    btn.innerHTML = 'إنشاء الحساب';
+                    window.location.href = "dashboard.html";
                 }, 1500);
             } catch (error) {
                 console.error("Signup Error:", error);

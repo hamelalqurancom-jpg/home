@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0ea5e9">
     <style>
         .dashboard-container {
             max-width: 800px;
@@ -313,9 +315,13 @@
                 const doc = await firestore.collection('brokers').doc(uid).get();
                 if (doc.exists && doc.data().profileImageUrl) {
                     const url = doc.data().profileImageUrl;
-                    document.getElementById('brokerAvatarImg').src = url;
-                    document.getElementById('brokerAvatarImg').style.display = 'block';
-                    document.getElementById('defaultAvatarIcon').style.display = 'none';
+                    const avatarImg = document.getElementById('brokerAvatarImg');
+                    const defaultIcon = document.getElementById('defaultAvatarIcon');
+                    if (avatarImg) {
+                        avatarImg.src = url;
+                        avatarImg.style.display = 'block';
+                    }
+                    if (defaultIcon) defaultIcon.style.display = 'none';
                     localStorage.setItem('brokerPhoto', url);
                 }
             } catch (e) {
@@ -404,7 +410,16 @@
                 document.getElementById('propCount').textContent = snapshot.size;
                 
                 if (snapshot.empty) {
-                    list.innerHTML = '<div style="text-align:center; padding: 40px; grid-column: 1 / -1;"><i class="fa-solid fa-box-open fa-3x" style="color: #cbd5e1; margin-bottom: 15px;"></i><p>لم تقم بإضافة أي عقارات بعد.</p></div>';
+                    list.innerHTML = `
+                        <div style="text-align:center; padding: 60px; grid-column: 1 / -1; background: #f8fafc; border-radius: 16px; border: 2px dashed #e2e8f0;">
+                            <i class="fa-solid fa-house-circle-exclamation fa-3x" style="color: #cbd5e1; margin-bottom: 20px;"></i>
+                            <h3 style="color: #64748b;">لا توجد عقارات حالياً</h3>
+                            <p style="color: #94a3b8; margin-bottom: 20px;">ابدأ بإضافة أول عقار لك الآن لتظهر في القائمة!</p>
+                            <button onclick="switchTab(event, 'addProp')" class="btn-primary" style="padding: 10px 25px;">
+                                <i class="fa-solid fa-plus"></i> أضف عقارك الأول
+                            </button>
+                        </div>
+                    `;
                     return;
                 }
 

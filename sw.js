@@ -12,7 +12,7 @@ const ASSETS_TO_CACHE = [
   './script.js',
   './app.js',
   './firebase-config.js',
-  './app_icon_512_1777322340086.png',
+  './icon.png',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
   'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap'
 ];
