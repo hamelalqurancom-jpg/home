@@ -383,6 +383,9 @@
                 avatarContainer.innerHTML = originalHTML;
             }
         });
+
+        // Initialize Dashboard Data
+        if (currentUserId && currentUserName) {
             document.getElementById('brokerDisplayName').textContent = currentUserName;
             // Auto-fill broker info in form
             document.getElementById('brokerName').value = currentUserName;
