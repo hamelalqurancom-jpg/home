@@ -185,15 +185,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label>صور العقار (يمكنك اختيار أكثر من صورة)</label>
-                    <div class="file-upload-box" onclick="document.getElementById('propImages').click()"
-                        style="border: 2px dashed var(--primary); padding: 30px; text-align: center; border-radius: 8px; cursor: pointer; background: #f0f9ff;">
-                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--primary);"></i>
-                        <p id="fileName" style="margin-top: 10px; color: var(--primary); font-weight: 500;">اضغط هنا
-                            لاختيار الصور</p>
-                        <input type="file" id="propImages" accept="image/*" multiple required style="display: none;">
+                    <label>صور العقار للمعاينة</label>
+                    <div style="background: #f8fafc; border: 2px dashed var(--border); border-radius: 12px; padding: 20px;">
+                        <div id="thumbnailsContainer" class="thumbnails-container" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 0; margin-top: 0;">
+                            <!-- Thumbnails will appear here -->
+                            <button type="button" onclick="document.getElementById('propImages').click()" class="btn-add-img" style="width: 80px; height: 80px; border: 2px dashed var(--primary); border-radius: 8px; background: #fff; color: var(--primary); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.3s; gap: 5px;">
+                                <i class="fa-solid fa-plus-circle fa-2x"></i>
+                                <span style="font-size: 0.6rem; font-weight: bold;">أضف صورة</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="thumbnails-container" id="thumbnailsContainer"></div>
+                    <input type="file" id="propImages" accept="image/*" multiple hidden>
+                    <p style="color: #64748b; font-size: 0.85rem; margin-top: 10px;"><i class="fa-solid fa-circle-info"></i> يمكنك إضافة أكثر من صورة لتوضيح حالة العقار بشكل أفضل.</p>
                 </div>
 
                 <!-- Progress Bar -->
@@ -234,6 +237,7 @@
         const areaSelect = document.getElementById('areaSelect');
         const newAreaContainer = document.getElementById('newAreaContainer');
         const newAreaInput = document.getElementById('newAreaInput');
+        const imageInput = document.getElementById('propImages');
 
         // Fetch custom areas from Firestore when page loads
         async function fetchCustomAreas() {
@@ -276,6 +280,47 @@
             }
         });
 
+        let selectedFiles = [];
+
+        imageInput.addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                files.forEach(file => {
+                    selectedFiles.push(file);
+                });
+                renderThumbnails();
+            }
+            e.target.value = '';
+        });
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            renderThumbnails();
+        };
+
+        function renderThumbnails() {
+            const container = document.getElementById('thumbnailsContainer');
+            const addButton = container.querySelector('.btn-add-img');
+            
+            // Remove existing thumbnails but keep the add button
+            container.querySelectorAll('.thumbnail-box').forEach(el => el.remove());
+
+            selectedFiles.forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const div = document.createElement('div');
+                    div.className = 'thumbnail-box';
+                    div.style = 'position: relative; width: 80px; height: 80px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; animation: fadeIn 0.3s;';
+                    div.innerHTML = `
+                        <img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <button type="button" onclick="removeFile(${i})" style="position: absolute; top: 0; right: 0; background: rgba(239, 68, 68, 0.9); color: white; border: none; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; border-bottom-left-radius: 6px;">&times;</button>
+                    `;
+                    container.insertBefore(div, addButton);
+                }
+                reader.readAsDataURL(file);
+            });
+        }
+
         // 2. Phone Validation Logic
         const phoneInput = document.getElementById('clientPhone');
         const phoneError = document.getElementById('phoneError');
@@ -286,29 +331,6 @@
             }
         });
 
-        // 3. Thumbnails Preview Logic
-        document.getElementById('propImages').addEventListener('change', function (e) {
-            const files = e.target.files;
-            const container = document.getElementById('thumbnailsContainer');
-            const fileNameDisplay = document.getElementById('fileName');
-            container.innerHTML = '';
-
-            if (files.length > 0) {
-                fileNameDisplay.textContent = `تم اختيار ${files.length} صورة/صور`;
-                Array.from(files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'thumbnail-preview';
-                        container.appendChild(img);
-                    }
-                    reader.readAsDataURL(file);
-                });
-            } else {
-                fileNameDisplay.textContent = "اضغط هنا لاختيار الصور";
-            }
-        });
 
         // 4. Form Submission Logic
         document.getElementById('consultationForm').addEventListener('submit', async (e) => {
@@ -316,7 +338,7 @@
 
             const btn = document.getElementById('btnSubmit');
             const alertBox = document.getElementById('alertBox');
-            const files = document.getElementById('propImages').files;
+            const files = selectedFiles;
 
             // Final Phone Validation
             if (phoneInput.value.length !== 11) {

@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0ea5e9">
 </head>
 <body>
     <!-- Header -->
@@ -20,6 +22,9 @@
                 <a href="index.html">البوابة الرئيسية</a>
                 <a href="properties.html" class="active">العقارات</a>
                 <a href="calculator.html">حساب المساحة</a>
+                <button class="btn-primary pwa-install-btn" style="display: none; padding: 8px 15px; font-size: 0.9rem; border-radius: 20px;">
+                    <i class="fa-solid fa-download"></i> تثبيت التطبيق
+                </button>
                 <a href="login.html?mode=login" class="btn-primary-outline"><i class="fa-solid fa-user-tie"></i> دخول السماسرة</a>
             </nav>
             <div class="mobile-menu-btn">
@@ -129,6 +134,7 @@
             </div>
         </div>
         <div class="footer-bottom">
+            <p style="margin-bottom: 10px; font-weight: 700; color: var(--primary);">تم التصميم والتطوير بواسطة م/ أحمد عمرو أبو الحاج بالتعاون مع مكتب الفتح للاستثمار العقاري</p>
             <p>جميع الحقوق محفوظة &copy; 2026 منصة عقارات مسير.</p>
         </div>
     </footer>
@@ -138,8 +144,24 @@
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
 
+    <!-- PWA Install Banner (Bottom) -->
+    <div id="pwaBanner" style="position: fixed; bottom: -150px; left: 0; right: 0; background: #fff; padding: 15px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 9999; display: flex; align-items: center; justify-content: space-between; transition: bottom 0.5s ease; border-top: 3px solid var(--primary);">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="app_icon_512_1777322340086.png" style="width: 50px; height: 50px; border-radius: 12px; box-shadow: var(--shadow);">
+            <div>
+                <h4 style="margin: 0; color: var(--dark);">تطبيق عقارات مسير</h4>
+                <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #64748b;">تصفح أسرع، بدون إنترنت، وبكل سهولة</p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button id="closeBanner" style="background: #f1f5f9; color: #64748b; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer;">لاحقاً</button>
+            <button id="installBannerBtn" class="btn-primary" style="padding: 10px 20px;">تثبيت الآن</button>
+        </div>
+    </div>
+
     <!-- Custom JS -->
     <script src="firebase-config.js"></script>
     <script src="app.js"></script>
+    <script src="pwa-handler.js"></script>
 </body>
 </html>

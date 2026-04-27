@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0ea5e9">
     <style>
         .portal-section {
             min-height: 100vh;
@@ -100,6 +102,24 @@
 </head>
 
 <body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i class="fa-solid fa-house-chimney"></i>
+            </div>
+            <div class="splash-text">
+                <p class="developed-by">تم التصميم والتطوير بواسطة</p>
+                <h1 class="engineer-name">المهندس أحمد عمرو أبو الحاج</h1>
+                <div class="collaboration">
+                    <span class="collab-text">بالتعاون مع</span>
+                    <h2 class="office-name">مكتب الفتح للاستثمار العقاري</h2>
+                </div>
+            </div>
+            <div class="splash-loader"></div>
+        </div>
+    </div>
+
     <div class="portal-section">
         <div class="portal-container">
             <div class="portal-header">
@@ -157,8 +177,52 @@
                     <p>مخصصة لمدير النظام لمراقبة العقارات، الاستشارات، والردود.</p>
                 </a>
             </div>
+
+            <!-- Install App Button (Desktop/Mobile) -->
+            <button id="btnInstall" class="btn-primary pwa-install-btn" style="margin-top: 30px; display: none; border-radius: 30px; padding: 15px 30px; box-shadow: var(--shadow-lg); font-size: 1.1rem;">
+                <i class="fa-solid fa-download"></i> تثبيت تطبيق عقارات مسير
+            </button>
         </div>
     </div>
+
+    <!-- PWA Install Banner (Bottom) -->
+    <div id="pwaBanner" style="position: fixed; bottom: -150px; left: 0; right: 0; background: #fff; padding: 15px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 9999; display: flex; align-items: center; justify-content: space-between; transition: bottom 0.5s ease; border-top: 3px solid var(--primary);">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="app_icon_512_1777322340086.png" style="width: 50px; height: 50px; border-radius: 12px; box-shadow: var(--shadow);">
+            <div>
+                <h4 style="margin: 0; color: var(--dark);">تطبيق عقارات مسير</h4>
+                <p style="margin: 3px 0 0 0; font-size: 0.85rem; color: #64748b;">تصفح أسرع، بدون إنترنت، وبكل سهولة</p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button id="closeBanner" style="background: #f1f5f9; color: #64748b; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer;">لاحقاً</button>
+            <button id="installBannerBtn" class="btn-primary" style="padding: 10px 20px;">تثبيت الآن</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-bottom">
+            <p style="margin-bottom: 10px; font-weight: 700; color: var(--primary);">تم التصميم والتطوير بواسطة م/ أحمد عمرو أبو الحاج بالتعاون مع مكتب الفتح للاستثمار العقاري</p>
+            <p>جميع الحقوق محفوظة &copy; 2026 منصة عقارات مسير.</p>
+        </div>
+    </footer>
+
+    <script src="pwa-handler.js"></script>
+    <script>
+        // Splash Screen Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            const splash = document.getElementById('splashScreen');
+            if (splash) {
+                setTimeout(() => {
+                    splash.classList.add('fade-out');
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                    }, 1000);
+                }, 3500);
+            }
+        });
+    </script>
 </body>
 
 </html>

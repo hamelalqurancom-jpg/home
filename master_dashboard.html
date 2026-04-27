@@ -416,7 +416,20 @@
     </div>
 
     <!-- Reply Modal -->
-    <div id="replyModal" class="modal">
+    <!-- Broker Posts Modal -->
+    <div id="brokerPostsModal" class="modal">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h3>منشورات السمسار: <span id="currentBrokerName"></span></h3>
+                <span class="close-modal" onclick="closeModal('brokerPostsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="brokerPostsList" class="properties-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
+                    <!-- Posts will load here -->
+                </div>
+            </div>
+        </div>
+    </div>
         <div class="modal-box">
             <h3><i class="fa-solid fa-reply"></i> الرد على استشارة</h3>
             <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; border: 1px solid #e2e8f0;" id="consultationDetailsBox">
@@ -559,8 +572,9 @@
                             <td>${data.title.substring(0, 30)}...</td>
                             <td>${data.area}</td>
                             <td style="color: #10b981; font-weight: bold;">${data.price.toLocaleString()} ج.م</td>
-                            <td>
-                                <button onclick="deleteProperty('${doc.id}')" class="btn-action btn-delete"><i class="fa-solid fa-trash"></i> حذف</button>
+                            <td style="display: flex; gap: 5px;">
+                                <a href="property.html?id=${doc.id}" target="_blank" class="btn-action" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; text-decoration: none; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-eye"></i></a>
+                                <button onclick="deleteProperty('${doc.id}')" class="btn-action btn-delete"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -604,12 +618,15 @@
                         const dateStr = data.createdAt ? data.createdAt.toDate().toLocaleDateString('ar-EG') : 'الآن';
                         
                         const tr = document.createElement('tr');
+                        const profileImg = data.profileImageUrl ? `<img src="${data.profileImageUrl}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-left: 10px;">` : `<div style="width: 35px; height: 35px; border-radius: 50%; background: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; margin-left: 10px; color: #64748b;"><i class="fa-solid fa-user"></i></div>`;
+
                         tr.innerHTML = `
                             <td style="font-size: 0.9rem; color: #64748b;">${dateStr}</td>
-                            <td><strong>${data.name}</strong></td>
+                            <td>${profileImg}<strong>${data.name}</strong></td>
                             <td dir="ltr" style="text-align: right;">${data.phone}</td>
                             <td><span style="background: #f1f5f9; padding: 5px 10px; border-radius: 4px; font-family: monospace;">${data.password || '---'}</span></td>
                             <td>
+                                <button onclick="viewBrokerPosts('${doc.id}', '${data.name}')" class="btn-action" style="padding: 5px 10px; font-size: 0.85rem; background: var(--primary); color: white;"><i class="fa-solid fa-eye"></i> عرض المنشورات</button>
                                 <button onclick="deleteBroker('${doc.id}')" class="btn-action btn-delete" style="padding: 5px 10px; font-size: 0.85rem;"><i class="fa-solid fa-trash"></i> حذف الحساب</button>
                             </td>
                         `;
@@ -674,6 +691,49 @@
             `;
 
             document.getElementById('replyModal').style.display = 'flex';
+        }
+
+        // --- Broker Posts Logic ---
+        async function viewBrokerPosts(brokerId, brokerName) {
+            const firestore = db || window.db;
+            if (!firestore) return;
+
+            document.getElementById('currentBrokerName').textContent = brokerName;
+            const list = document.getElementById('brokerPostsList');
+            list.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;"><i class="fa-solid fa-spinner fa-spin fa-2x"></i> جاري تحميل المنشورات...</div>';
+            
+            document.getElementById('brokerPostsModal').style.display = 'flex';
+
+            try {
+                const snapshot = await firestore.collection('properties').where('brokerId', '==', brokerId).get();
+                list.innerHTML = '';
+
+                if (snapshot.empty) {
+                    list.innerHTML = '<div style="text-align: center; padding: 40px; grid-column: 1/-1;">هذا السمسار لم يقم بإضافة أي عقارات بعد.</div>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const card = document.createElement('div');
+                    card.className = 'prop-card';
+                    card.style = 'border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: white;';
+                    card.innerHTML = `
+                        <img src="${data.imageUrl}" style="width: 100%; height: 180px; object-fit: cover;">
+                        <div style="padding: 15px;">
+                            <h4 style="margin-bottom: 5px;">${data.title}</h4>
+                            <div style="color: var(--primary); font-weight: bold; margin-bottom: 10px;">${data.price.toLocaleString()} ج.م</div>
+                            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                <button onclick="deleteProperty('${doc.id}')" class="btn-action btn-delete" style="flex: 1; padding: 5px;"><i class="fa-solid fa-trash"></i> حذف</button>
+                            </div>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error fetching broker posts:", error);
+                list.innerHTML = 'حدث خطأ أثناء تحميل المنشورات.';
+            }
         }
 
         function closeModal(modalId) {

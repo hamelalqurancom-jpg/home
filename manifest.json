@@ -1,0 +1,24 @@
+{
+  "name": "عقارات مسير",
+  "short_name": "عقارات مسير",
+  "description": "المنصة الأولى لبيع وتأجير العقارات في مدينة مسير",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f8f9fa",
+  "theme_color": "#0ea5e9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "app_icon_512_1777322340086.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "app_icon_512_1777322340086.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
