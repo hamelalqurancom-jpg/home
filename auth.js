@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('brokerPhone', brokerData.phone);
 
                     showAlert("تم تسجيل الدخول بنجاح!", false);
-                    setTimeout(() => window.location.href = "dashboard.html", 1000);
+                    setTimeout(() => window.location.href = "index.html", 1000);
                 } else {
                     showAlert("رقم الهاتف أو كلمة المرور غير صحيحة.");
                     btn.disabled = false;
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 showAlert("تم إنشاء الحساب وتسجيل دخولك بنجاح!", false);
                 setTimeout(() => {
-                    window.location.href = "dashboard.html";
+                    window.location.href = "index.html";
                 }, 1500);
             } catch (error) {
                 console.error("Signup Error:", error);

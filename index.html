@@ -129,11 +129,14 @@
 
             <div class="portal-grid">
                 <!-- 1. إنشاء حساب -->
-                <a href="login.html?mode=signup" class="portal-card" style="border: 2px solid var(--primary); background: #f0f9ff;">
+                <a href="login.html?mode=signup" class="portal-card"
+                    style="border: 2px solid var(--primary); background: #f0f9ff;">
                     <i class="fa-solid fa-user-plus"></i>
                     <h3 style="color: var(--primary);">إنشاء حساب عقاري</h3>
                     <p>ابدأ الآن وقم ببناء بروفايلك الخاص لعرض عقاراتك</p>
-                    <span style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; font-weight: bold;">سجل مجاناً</span>
+                    <span
+                        style="background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-top: 10px; font-weight: bold;">سجل
+                        مجاناً</span>
                 </a>
 
                 <!-- 2. تسجيل الدخول -->
@@ -180,14 +183,16 @@
             </div>
 
             <!-- Install App Button (Desktop/Mobile) -->
-            <button id="btnInstall" class="btn-primary pwa-install-btn" style="margin-top: 30px; display: none; border-radius: 30px; padding: 15px 30px; box-shadow: var(--shadow-lg); font-size: 1.1rem;">
+            <button id="btnInstall" class="btn-primary pwa-install-btn"
+                style="margin-top: 30px; display: none; border-radius: 30px; padding: 15px 30px; box-shadow: var(--shadow-lg); font-size: 1.1rem;">
                 <i class="fa-solid fa-download"></i> تثبيت تطبيق عقارات مسير
             </button>
         </div>
     </div>
 
     <!-- PWA Install Banner (Bottom) -->
-    <div id="pwaBanner" style="position: fixed; bottom: -150px; left: 0; right: 0; background: #fff; padding: 15px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 9999; display: flex; align-items: center; justify-content: space-between; transition: bottom 0.5s ease; border-top: 3px solid var(--primary);">
+    <div id="pwaBanner"
+        style="position: fixed; bottom: -150px; left: 0; right: 0; background: #fff; padding: 15px 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 9999; display: flex; align-items: center; justify-content: space-between; transition: bottom 0.5s ease; border-top: 3px solid var(--primary);">
         <div style="display: flex; align-items: center; gap: 15px;">
             <img src="icon.png" style="width: 50px; height: 50px; border-radius: 12px; box-shadow: var(--shadow);">
             <div>
@@ -196,7 +201,8 @@
             </div>
         </div>
         <div style="display: flex; gap: 10px;">
-            <button id="closeBanner" style="background: #f1f5f9; color: #64748b; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer;">لاحقاً</button>
+            <button id="closeBanner"
+                style="background: #f1f5f9; color: #64748b; border: none; padding: 10px 15px; border-radius: 8px; font-weight: 700; cursor: pointer;">لاحقاً</button>
             <button id="installBannerBtn" class="btn-primary" style="padding: 10px 20px;">تثبيت الآن</button>
         </div>
     </div>
@@ -204,17 +210,25 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container footer-bottom">
-            <p style="margin-bottom: 10px; font-weight: 700; color: var(--primary);">تم التصميم والتطوير بواسطة م/ أحمد عمرو أبو الحاج بالتعاون مع مكتب الفتح للاستثمار العقاري</p>
+            <p style="margin-bottom: 10px; font-weight: 700; color: var(--primary);">تم التصميم والتطوير بواسطة م/ أحمد
+                عمرو أبو الحاج بالتعاون مع مكتب الفتح للاستثمار العقاري</p>
             <p>جميع الحقوق محفوظة &copy; 2026 منصة عقارات مسير.</p>
         </div>
     </footer>
 
     <script src="pwa-handler.js"></script>
     <script>
-        // Automatic Login Check
-        if (localStorage.getItem('brokerLogged') === 'true') {
-            window.location.href = 'dashboard.html';
-        }
+        // Check for logged-in user
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('brokerLogged') === 'true') {
+                const name = localStorage.getItem('brokerName');
+                const headerP = document.querySelector('.portal-header p');
+                if (headerP) {
+                    headerP.innerHTML = `أهلاً بك مجدداً يا <strong>${name}</strong>، ماذا تود أن تفعل اليوم؟`;
+                }
+                // Optional: Highlight the dashboard card
+            }
+        });
 
         // Splash Screen Logic
         window.addEventListener('DOMContentLoaded', () => {

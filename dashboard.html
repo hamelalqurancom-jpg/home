@@ -366,14 +366,16 @@
                 });
 
                 // Update UI
-                document.getElementById('brokerAvatarImg').src = photoUrl;
-                document.getElementById('brokerAvatarImg').style.display = 'block';
-                document.getElementById('defaultAvatarIcon').style.display = 'none';
                 avatarContainer.innerHTML = originalHTML;
-                document.getElementById('brokerAvatarImg').src = photoUrl; // Reset the src after restoring HTML
+                const finalImg = document.getElementById('brokerAvatarImg');
+                if (finalImg) {
+                    finalImg.src = photoUrl;
+                    finalImg.style.display = 'block';
+                    document.getElementById('defaultAvatarIcon').style.display = 'none';
+                }
                 
                 alert("تم تحديث الصورة الشخصية بنجاح!");
-                location.reload(); // Quick way to sync everything
+                // location.reload(); // Removed to prevent interrupting the experience
 
             } catch (error) {
                 console.error("Avatar Upload Error:", error);
@@ -394,10 +396,22 @@
         }
 
         function switchTab(event, tabId) {
+            // Remove active class from all tabs and contents
             document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            // Add active class to the clicked tab
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            } else if (event && event.target) {
+                // If it's a direct click and currentTarget is not available, find the closest tab div
+                const tab = event.target.closest('.profile-tab');
+                if (tab) tab.classList.add('active');
+            }
+            
+            // Show the target content
+            const content = document.getElementById('tab-' + tabId);
+            if (content) content.classList.add('active');
         }
 
         async function loadMyProperties(uid) {
@@ -455,6 +469,9 @@
                     `;
                     list.appendChild(card);
                 });
+            }, error => {
+                console.error("Snapshot error:", error);
+                list.innerHTML = '<div style="text-align:center; padding: 40px; grid-column: 1 / -1; color: #ef4444;"><i class="fa-solid fa-triangle-exclamation fa-2x"></i><p>حدث خطأ أثناء تحميل البيانات. يرجى التأكد من اتصالك بالإنترنت.</p></div>';
             });
         }
 
@@ -550,7 +567,7 @@
             }
         }
         
-        let selectedFiles = [];
+        // Selected files handling logic (selectedFiles is already declared at the top)
 
         document.getElementById('propImage').addEventListener('change', function(e) {
             const files = Array.from(e.target.files);
